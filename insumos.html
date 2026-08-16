@@ -3,73 +3,26 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Insumos — Floricultura</title>
+<title>Insumos · Entre Flores ERP</title>
+<link rel="icon" href="assets/img/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.js"></script>
+<link rel="stylesheet" href="assets/css/style.css">
 <style>
-  :root{
-    --verde: #2F4B3C;
-    --verde-claro: #4F6F5A;
-    --creme: #FAF6EF;
-    --papel: #F1EADC;
-    --rosa: #C98A93;
-    --mostarda: #B8862E;
-    --carvao: #2A2823;
-    --linha: #DCD2BE;
-    --erro: #B5473A;
+  header.top{
+    display:flex;justify-content:space-between;align-items:center;
+    max-width:640px;margin:0 auto;padding:20px 20px 0;
   }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--creme);
-    color:var(--carvao);
-    font-family:'Inter',sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:640px;margin:0 auto;padding:28px 20px 80px;}
-  header{margin-bottom:28px;}
-  .eyebrow{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:11px;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    color:var(--verde-claro);
-    margin-bottom:6px;
-  }
-  h1{
-    font-family:'Fraunces',serif;
-    font-weight:500;
-    font-size:32px;
-    margin:0 0 4px;
-    color:var(--verde);
-    letter-spacing:-0.01em;
-  }
-  .sub{color:#66605A;font-size:14.5px;margin:0;}
+  header.top img{height:30px;}
+  .back{font-size:13px;color:var(--cinza-texto);text-decoration:none;}
 
   .actions{display:flex;gap:10px;margin:24px 0;flex-wrap:wrap;}
-  button{
-    font-family:'Inter',sans-serif;
-    font-weight:600;
-    font-size:14px;
-    border-radius:10px;
-    padding:12px 18px;
-    border:none;
-    cursor:pointer;
-    transition:transform .12s ease, box-shadow .12s ease;
-  }
-  button:active{transform:scale(0.98);}
-  .btn-primary{background:var(--verde);color:var(--creme);}
-  .btn-primary:hover{box-shadow:0 4px 14px rgba(47,75,60,0.25);}
-  .btn-secondary{background:transparent;color:var(--verde);border:1.5px solid var(--verde);}
-  .btn-secondary:hover{background:rgba(47,75,60,0.06);}
-  .btn-ghost{background:transparent;color:#8a8378;font-weight:500;padding:8px 10px;}
 
-  /* ticket / scan card */
   .scan-panel{
-    background:var(--verde);
-    color:var(--creme);
-    border-radius:16px;
+    background:var(--verde-escuro);
+    color:var(--off-white);
+    border-radius:var(--radius-lg);
     padding:22px;
     margin-bottom:26px;
     position:relative;
@@ -77,53 +30,25 @@
     display:none;
   }
   .scan-panel.open{display:block;}
-  .scan-panel h2{font-family:'Fraunces',serif;font-weight:500;font-size:19px;margin:0 0 4px;}
-  .scan-panel p{font-size:13px;color:#CFE0D3;margin:0 0 14px;}
+  .scan-panel h2{color:var(--off-white);font-size:19px;margin:0 0 4px;}
+  .scan-panel p{font-size:13px;color:var(--rosa-queimado);margin:0 0 14px;}
   video{width:100%;border-radius:10px;background:#000;display:block;}
-  .scan-status{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    color:#CFE0D3;
-    margin-top:10px;
-    min-height:16px;
-  }
-  .scan-close{position:absolute;top:16px;right:16px;background:none;border:none;color:#CFE0D3;font-size:18px;cursor:pointer;padding:4px;}
+  .scan-status{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--rosa-queimado);margin-top:10px;min-height:16px;}
+  .scan-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--off-white);font-size:18px;cursor:pointer;padding:4px;}
 
-  /* form card, styled like a receipt / ticket */
   .form-card{
-    background:var(--papel);
-    border-radius:14px;
+    background:var(--rosa-queimado);
+    border-radius:var(--radius-lg);
     padding:22px;
     margin-bottom:26px;
     border:1px solid var(--linha);
     display:none;
-    position:relative;
   }
   .form-card.open{display:block;}
-  .form-card::before{
-    content:"";
-    position:absolute;
-    top:0;left:22px;right:22px;
-    height:1px;
-    background:repeating-linear-gradient(90deg, var(--linha) 0 6px, transparent 6px 12px);
-  }
-  .form-card h2{font-family:'Fraunces',serif;font-weight:500;font-size:18px;margin:2px 0 16px;color:var(--verde);}
-  .field{margin-bottom:14px;}
-  label{display:block;font-size:12px;font-weight:600;color:#5c5648;margin-bottom:5px;letter-spacing:0.01em;}
-  input, select{
-    width:100%;
-    padding:10px 12px;
-    border-radius:8px;
-    border:1.5px solid var(--linha);
-    background:var(--creme);
-    font-family:'Inter',sans-serif;
-    font-size:14.5px;
-    color:var(--carvao);
-  }
-  input:focus, select:focus{outline:none;border-color:var(--verde-claro);}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .form-card h2{font-size:18px;margin:2px 0 16px;}
+
   .match-hint{
-    background:#FBF0D9;
+    background:var(--amarelo);
     border:1px solid #E6C878;
     border-radius:8px;
     padding:10px 12px;
@@ -139,12 +64,8 @@
 
   .form-actions{display:flex;gap:10px;margin-top:4px;}
 
-  /* list */
-  .list-head{
-    display:flex;justify-content:space-between;align-items:baseline;
-    margin-bottom:10px;
-  }
-  .list-head h2{font-family:'Fraunces',serif;font-weight:500;font-size:19px;color:var(--verde);margin:0;}
+  .list-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
+  .list-head h2{font-size:19px;margin:0;}
   .count{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8a8378;}
 
   .insumo{
@@ -155,45 +76,29 @@
   .insumo:last-child{border-bottom:none;}
   .insumo-nome{font-weight:600;font-size:14.5px;}
   .insumo-meta{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8a8378;margin-top:3px;}
-  .insumo-preco{font-family:'IBM Plex Mono',monospace;font-size:14.5px;color:var(--verde);font-weight:500;white-space:nowrap;}
+  .insumo-preco{font-family:'IBM Plex Mono',monospace;font-size:14.5px;color:var(--verde-escuro);font-weight:500;white-space:nowrap;}
   .insumo-row-actions{display:flex;gap:4px;margin-left:12px;}
-  .icon-btn{
-    background:none;border:none;cursor:pointer;color:#8a8378;padding:6px;font-size:14px;border-radius:6px;
-  }
+  .icon-btn{background:none;border:none;cursor:pointer;color:#8a8378;padding:6px;font-size:14px;border-radius:6px;}
   .icon-btn:hover{background:rgba(0,0,0,0.05);color:var(--carvao);}
-
-  .empty{
-    text-align:center;padding:40px 20px;color:#8a8378;font-size:14px;
-  }
 
   .tag-origem{
     font-family:'IBM Plex Mono',monospace;
-    font-size:10px;
-    padding:2px 7px;
-    border-radius:20px;
-    background:rgba(47,75,60,0.08);
-    color:var(--verde-claro);
-    margin-left:8px;
-    letter-spacing:0.02em;
+    font-size:10px;padding:2px 7px;border-radius:20px;
+    background:rgba(90,116,87,0.12);color:var(--verde-escuro);
+    margin-left:8px;letter-spacing:0.02em;
   }
-
-  .toast{
-    position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-    background:var(--carvao);color:var(--creme);
-    padding:11px 18px;border-radius:8px;font-size:13.5px;
-    opacity:0;pointer-events:none;transition:opacity .25s ease, transform .25s ease;
-    font-weight:500;
-  }
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
 </style>
 </head>
 <body>
+<header class="top">
+  <a class="back" href="dashboard.html">← Início</a>
+  <img src="assets/img/logo.png" alt="Entre Flores">
+</header>
+
 <div class="wrap">
-  <header>
-    <div class="eyebrow">ERP Floricultura · São José dos Campos</div>
-    <h1>Insumos</h1>
-    <p class="sub">Cadastre pelo QR Code da nota ou manualmente. Tudo aqui pode ser editado depois.</p>
-  </header>
+  <div class="eyebrow" style="margin-top:16px;">ERP Floricultura · São José dos Campos</div>
+  <h1>Insumos</h1>
+  <p style="color:var(--cinza-texto);margin:0 0 8px;">Cadastre pelo QR Code da nota ou manualmente. Tudo aqui pode ser editado depois.</p>
 
   <div class="actions">
     <button class="btn-primary" id="btnScan">Ler nota (QR Code)</button>
@@ -263,9 +168,12 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="assets/js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/supabase-client.js"></script>
 <script>
-const STORAGE_KEY = 'insumos:sjc';
 let insumos = [];
+let userId = null;
 let editingId = null;
 let pendingMatchId = null;
 let stream = null;
@@ -282,7 +190,6 @@ const toast = (msg) => {
 function normalize(s){
   return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
 }
-// similaridade simples: distância de Levenshtein normalizada
 function similarity(a,b){
   a = normalize(a); b = normalize(b);
   if(a===b) return 1;
@@ -307,16 +214,13 @@ function findBestMatch(nome){
 }
 
 async function load(){
-  try{
-    const res = await window.storage.get(STORAGE_KEY, false);
-    insumos = res ? JSON.parse(res.value) : [];
-  }catch(e){ insumos = []; }
+  const { data, error } = await supabaseClient
+    .from('insumos')
+    .select('*')
+    .order('created_at', { ascending:false });
+  if(error){ toast('Não consegui carregar os insumos'); console.error(error); return; }
+  insumos = data || [];
   render();
-}
-async function persist(){
-  try{
-    await window.storage.set(STORAGE_KEY, JSON.stringify(insumos), false);
-  }catch(e){ toast('Não consegui salvar — tenta de novo'); }
 }
 
 function render(){
@@ -324,7 +228,7 @@ function render(){
   list.innerHTML = '';
   el('count').textContent = insumos.length;
   el('empty').style.display = insumos.length ? 'none' : 'block';
-  insumos.slice().reverse().forEach(it=>{
+  insumos.forEach(it=>{
     const row = document.createElement('div');
     row.className = 'insumo';
     row.innerHTML = `
@@ -376,9 +280,11 @@ function openEdit(id){
   el('scanPanel').classList.remove('open');
   window.scrollTo({top: el('formCard').offsetTop - 20, behavior:'smooth'});
 }
-function removeItem(id){
+async function removeItem(id){
+  const { error } = await supabaseClient.from('insumos').delete().eq('id', id);
+  if(error){ toast('Não consegui remover'); return; }
   insumos = insumos.filter(i=>i.id!==id);
-  persist(); render();
+  render();
   toast('Insumo removido');
 }
 function closeForm(){
@@ -389,7 +295,7 @@ function closeForm(){
 
 function checkMatchOnType(){
   el('fNome').oninput = ()=>{
-    if(editingId) return; // não checa duplicidade ao editar o próprio
+    if(editingId) return;
     const nome = el('fNome').value.trim();
     if(nome.length < 3){ el('matchHint').classList.remove('open'); return; }
     const match = findBestMatch(nome);
@@ -426,18 +332,19 @@ el('btnSalvar').onclick = async ()=>{
     return;
   }
   if(editingId){
-    const it = insumos.find(i=>i.id===editingId);
-    it.nome = nome; it.unidade = unidade; it.preco = preco; it.fornecedor = fornecedor;
+    const { error } = await supabaseClient
+      .from('insumos')
+      .update({ nome, unidade, preco, fornecedor })
+      .eq('id', editingId);
+    if(error){ toast('Não consegui salvar'); console.error(error); return; }
   } else {
-    insumos.push({
-      id: 'i_' + Date.now(),
-      nome, unidade, preco, fornecedor,
-      origem: window.__lastOrigem || 'manual'
-    });
+    const { error } = await supabaseClient
+      .from('insumos')
+      .insert({ nome, unidade, preco, fornecedor, origem: window.__lastOrigem || 'manual', user_id: userId });
+    if(error){ toast('Não consegui salvar'); console.error(error); return; }
   }
   window.__lastOrigem = 'manual';
-  await persist();
-  render();
+  await load();
   closeForm();
   toast('Insumo salvo');
 };
@@ -494,9 +401,10 @@ function handleQrResult(url){
   setTimeout(()=>{
     el('scanPanel').classList.remove('open');
     if(chave){
-      // Busca automática dos itens depende de integração com a SEFAZ-SP ou
-      // um provedor tipo Nuvem Fiscal — isso roda no backend, não no navegador.
-      // Por ora, pré-preenchemos o formulário com a referência da nota lida.
+      // A busca automática dos itens da nota depende de uma consulta à
+      // SEFAZ-SP (ou um provedor tipo Nuvem Fiscal) feita no backend —
+      // isso ainda não está implementado. Por ora, identificamos a nota
+      // e pré-preenchemos o formulário para confirmação manual.
       window.__lastOrigem = 'qr';
       openManual({
         nome: '',
@@ -512,8 +420,12 @@ function handleQrResult(url){
   }, 400);
 }
 
-load();
+(async () => {
+  const session = await requireAuth();
+  if(!session) return;
+  userId = session.user.id;
+  load();
+})();
 </script>
 </body>
-  </html>
-                                      
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Início · Entre Flores ERP</title>
+<link rel="icon" href="assets/img/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  header.top{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:20px 20px 0;max-width:640px;margin:0 auto;
+  }
+  header.top img{height:34px;}
+  .grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px;
+  }
+  .modulo{
+    border-radius:var(--radius-lg);
+    padding:20px;
+    text-decoration:none;
+    display:block;
+    transition:transform .12s ease;
+  }
+  .modulo:active{transform:scale(0.98);}
+  .modulo.ativo{background:var(--verde-escuro);color:var(--off-white);}
+  .modulo.ativo .eyebrow{color:var(--rosa-queimado);}
+  .modulo.em-breve{background:var(--rosa-queimado);color:var(--verde-escuro);opacity:0.75;}
+  .modulo h3{margin:6px 0 4px;font-size:17px;}
+  .modulo p{margin:0;font-size:12.5px;color:inherit;opacity:0.8;}
+</style>
+</head>
+<body>
+<header class="top">
+  <img src="assets/img/logo.png" alt="Entre Flores">
+  <button class="btn-ghost" id="btnLogout">Sair</button>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow" style="margin-top:20px;">São José dos Campos</div>
+  <h1>Bem-vinda(o) de volta</h1>
+  <p style="color:var(--cinza-texto);margin:0;">Escolha um módulo para começar.</p>
+
+  <div class="grid">
+    <a class="modulo ativo" href="insumos.html">
+      <span class="eyebrow">01</span>
+      <h3>Insumos</h3>
+      <p>Cadastre pela nota (QR) ou manualmente</p>
+    </a>
+    <div class="modulo em-breve">
+      <span class="eyebrow">02</span>
+      <h3>Produtos</h3>
+      <p>Monte buquês e precifique — em breve</p>
+    </div>
+    <div class="modulo em-breve">
+      <span class="eyebrow">03</span>
+      <h3>Financeiro</h3>
+      <p>Taxas e impostos — em breve</p>
+    </div>
+    <div class="modulo em-breve">
+      <span class="eyebrow">04</span>
+      <h3>Vendas</h3>
+      <p>Integração com maquininha — em breve</p>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/supabase-client.js"></script>
+<script>
+  requireAuth();
+  document.getElementById('btnLogout').onclick = logout;
+</script>
+</body>
+</html>
