@@ -6,6 +6,6 @@
 // tem problema ela ir para o repositório.
 // ============================================================
 window.SUPABASE_CONFIG = {
-  url: "https://SEU-PROJETO.supabase.co",
-  anonKey: "SUA-ANON-KEY-AQUI"
+  url: "https://zwypbpugavpeubbigijz.supabase.co",
+  anonKey: "sb_publishable_bZ4QWS0P116A-Dh2jUaYkA_ffMZd-5q"
 };

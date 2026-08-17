@@ -1,106 +1,136 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Entre Flores · ERP</title>
-<link rel="icon" href="assets/img/logo.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css">
-<style>
-  .login-card{
-    width:100%;
-    max-width:380px;
-    background:var(--off-white);
-    border:1px solid var(--linha);
-    border-radius:var(--radius-lg);
-    padding:32px 28px;
-    text-align:center;
-  }
-  .login-card img{width:180px;margin-bottom:8px;}
-  .login-card p.sub{color:var(--cinza-texto);font-size:13.5px;margin:0 0 24px;}
-  .login-card form{text-align:left;}
-  .toggle-mode{
-    text-align:center;margin-top:16px;font-size:13px;color:var(--cinza-texto);
-  }
-  .toggle-mode button{background:none;border:none;color:var(--vinho);font-weight:600;cursor:pointer;padding:0;font-size:13px;}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entre Flores · ERP</title>
+  <link rel="icon" href="assets/img/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .login-card {
+      width: 100%;
+      max-width: 380px;
+      background: var(--off-white);
+      border: 1px solid var(--linha);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      text-align: center;
+    }
+
+    .login-card img {
+      width: 180px;
+      margin-bottom: 8px;
+    }
+
+    .login-card p.sub {
+      color: var(--cinza-texto);
+      font-size: 13.5px;
+      margin: 0 0 24px;
+    }
+
+    .login-card form {
+      text-align: left;
+    }
+
+    .toggle-mode {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--cinza-texto);
+    }
+
+    .toggle-mode button {
+      background: none;
+      border: none;
+      color: var(--vinho);
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0;
+      font-size: 13px;
+    }
+  </style>
 </head>
+
 <body>
-<div class="center-screen">
-  <div class="login-card">
-    <img src="assets/img/logo.png" alt="Entre Flores · flowershop">
-    <p class="sub">Gestão da sua floricultura</p>
+  <div class="center-screen">
+    <div class="login-card">
+      <img src="assets/img/logo.png" alt="Entre Flores · flowershop">
+      <p class="sub">Gestão administrativa</p>
 
-    <form id="loginForm">
-      <div class="field">
-        <label>E-mail</label>
-        <input type="email" id="email" required placeholder="voce@floricultura.com">
-      </div>
-      <div class="field">
-        <label>Senha</label>
-        <input type="password" id="password" required placeholder="••••••••">
-      </div>
-      <button type="submit" class="btn-primary" style="width:100%;" id="submitBtn">Entrar</button>
-      <div class="error-msg" id="errorMsg" style="display:none;"></div>
-    </form>
+      <form id="loginForm">
+        <div class="field">
+          <label>E-mail</label>
+          <input type="email" id="email" required placeholder="voce@floricultura.com">
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input type="password" id="password" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn-primary" style="width:100%;" id="submitBtn">Entrar</button>
+        <div class="error-msg" id="errorMsg" style="display:none;"></div>
+      </form>
 
-    <div class="toggle-mode">
-      <span id="toggleText">Ainda não tem conta?</span>
-      <button id="toggleBtn" type="button">Criar conta</button>
+      <div class="toggle-mode">
+        <span id="toggleText">Ainda não tem conta?</span>
+        <button id="toggleBtn" type="button">Criar conta</button>
+      </div>
     </div>
   </div>
-</div>
 
-<script src="assets/js/config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/supabase-client.js"></script>
-<script>
-let mode = 'login'; // ou 'signup'
+  <script src="assets/js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-client.js"></script>
+  <script>
+    let mode = 'login'; // ou 'signup'
 
-document.getElementById('toggleBtn').onclick = () => {
-  mode = mode === 'login' ? 'signup' : 'login';
-  document.getElementById('submitBtn').textContent = mode === 'login' ? 'Entrar' : 'Criar conta';
-  document.getElementById('toggleText').textContent = mode === 'login' ? 'Ainda não tem conta?' : 'Já tem conta?';
-  document.getElementById('toggleBtn').textContent = mode === 'login' ? 'Criar conta' : 'Entrar';
-};
+    document.getElementById('toggleBtn').onclick = () => {
+      mode = mode === 'login' ? 'signup' : 'login';
+      document.getElementById('submitBtn').textContent = mode === 'login' ? 'Entrar' : 'Criar conta';
+      document.getElementById('toggleText').textContent = mode === 'login' ? 'Ainda não tem conta?' : 'Já tem conta?';
+      document.getElementById('toggleBtn').textContent = mode === 'login' ? 'Criar conta' : 'Entrar';
+    };
 
-document.getElementById('loginForm').onsubmit = async (e) => {
-  e.preventDefault();
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  const errorMsg = document.getElementById('errorMsg');
-  const submitBtn = document.getElementById('submitBtn');
-  errorMsg.style.display = 'none';
-  submitBtn.disabled = true;
+    document.getElementById('loginForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMsg');
+      const submitBtn = document.getElementById('submitBtn');
+      errorMsg.style.display = 'none';
+      submitBtn.disabled = true;
 
-  try{
-    if(mode === 'login'){
-      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-      if(error) throw error;
-      window.location.href = 'dashboard.html';
-    } else {
-      const { error } = await supabaseClient.auth.signUp({ email, password });
-      if(error) throw error;
-      errorMsg.style.display = 'block';
-      errorMsg.style.color = 'var(--verde-escuro)';
-      errorMsg.textContent = 'Conta criada! Verifique seu e-mail para confirmar, depois faça login.';
-    }
-  }catch(err){
-    errorMsg.style.color = 'var(--erro)';
-    errorMsg.textContent = err.message || 'Não foi possível continuar. Tente de novo.';
-    errorMsg.style.display = 'block';
-  }finally{
-    submitBtn.disabled = false;
-  }
-};
+      try {
+        if (mode === 'login') {
+          const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+          if (error) throw error;
+          window.location.href = 'dashboard.html';
+        } else {
+          const { error } = await supabaseClient.auth.signUp({ email, password });
+          if (error) throw error;
+          errorMsg.style.display = 'block';
+          errorMsg.style.color = 'var(--verde-escuro)';
+          errorMsg.textContent = 'Conta criada! Verifique seu e-mail para confirmar, depois faça login.';
+        }
+      } catch (err) {
+        errorMsg.style.color = 'var(--erro)';
+        errorMsg.textContent = err.message || 'Não foi possível continuar. Tente de novo.';
+        errorMsg.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+      }
+    };
 
-// já logado? manda direto pro dashboard
-(async () => {
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  if(session) window.location.href = 'dashboard.html';
-})();
-</script>
+    // já logado? manda direto pro dashboard
+    (async () => {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) window.location.href = 'dashboard.html';
+    })();
+  </script>
 </body>
+
 </html>
