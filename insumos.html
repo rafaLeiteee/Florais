@@ -1,239 +1,383 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Insumos · Entre Flores ERP</title>
-<link rel="icon" href="assets/img/logo.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.js"></script>
-<link rel="stylesheet" href="assets/css/style.css">
-<style>
-  header.top{
-    display:flex;justify-content:space-between;align-items:center;
-    max-width:640px;margin:0 auto;padding:20px 20px 0;
-  }
-  header.top img{height:30px;}
-  .back{font-size:13px;color:var(--cinza-texto);text-decoration:none;}
-
-  .actions{display:flex;gap:10px;margin:24px 0;flex-wrap:wrap;}
-
-  .scan-panel{
-    background:var(--verde-escuro);
-    color:var(--off-white);
-    border-radius:var(--radius-lg);
-    padding:22px;
-    margin-bottom:26px;
-    position:relative;
-    overflow:hidden;
-    display:none;
-  }
-  .scan-panel.open{display:block;}
-  .scan-panel h2{color:var(--off-white);font-size:19px;margin:0 0 4px;}
-  .scan-panel p{font-size:13px;color:var(--rosa-queimado);margin:0 0 14px;}
-  video{width:100%;border-radius:10px;background:#000;display:block;}
-  .scan-status{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--rosa-queimado);margin-top:10px;min-height:16px;}
-  .scan-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--off-white);font-size:18px;cursor:pointer;padding:4px;}
-
-  .form-card{
-    background:var(--rosa-queimado);
-    border-radius:var(--radius-lg);
-    padding:22px;
-    margin-bottom:26px;
-    border:1px solid var(--linha);
-    display:none;
-  }
-  .form-card.open{display:block;}
-  .form-card h2{font-size:18px;margin:2px 0 16px;}
-
-  .match-hint{
-    background:var(--amarelo);
-    border:1px solid #E6C878;
-    border-radius:8px;
-    padding:10px 12px;
-    font-size:13px;
-    margin-bottom:14px;
-    color:#6b5218;
-    display:none;
-  }
-  .match-hint.open{display:block;}
-  .match-hint b{display:block;margin-bottom:6px;}
-  .match-hint .choices{display:flex;gap:8px;margin-top:8px;}
-  .match-hint button{font-size:12.5px;padding:7px 12px;}
-
-  .form-actions{display:flex;gap:10px;margin-top:4px;}
-
-  .list-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
-  .list-head h2{font-size:19px;margin:0;}
-  .count{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8a8378;}
-
-  .insumo{
-    display:flex;justify-content:space-between;align-items:center;
-    padding:14px 4px;
-    border-bottom:1px solid var(--linha);
-  }
-  .insumo:last-child{border-bottom:none;}
-  .insumo-nome{font-weight:600;font-size:14.5px;}
-  .insumo-meta{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8a8378;margin-top:3px;}
-  .insumo-preco{font-family:'IBM Plex Mono',monospace;font-size:14.5px;color:var(--verde-escuro);font-weight:500;white-space:nowrap;}
-  .insumo-row-actions{display:flex;gap:4px;margin-left:12px;}
-  .icon-btn{background:none;border:none;cursor:pointer;color:#8a8378;padding:6px;font-size:14px;border-radius:6px;}
-  .icon-btn:hover{background:rgba(0,0,0,0.05);color:var(--carvao);}
-
-  .tag-origem{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:10px;padding:2px 7px;border-radius:20px;
-    background:rgba(90,116,87,0.12);color:var(--verde-escuro);
-    margin-left:8px;letter-spacing:0.02em;
-  }
-</style>
-</head>
-<body>
-<header class="top">
-  <a class="back" href="dashboard.html">← Início</a>
-  <img src="assets/img/logo.png" alt="Entre Flores">
-</header>
-
-<div class="wrap">
-  <div class="eyebrow" style="margin-top:16px;">ERP Floricultura · São José dos Campos</div>
-  <h1>Insumos</h1>
-  <p style="color:var(--cinza-texto);margin:0 0 8px;">Cadastre pelo QR Code da nota ou manualmente. Tudo aqui pode ser editado depois.</p>
-
-  <div class="actions">
-    <button class="btn-primary" id="btnScan">Ler nota (QR Code)</button>
-    <button class="btn-secondary" id="btnManual">Adicionar manualmente</button>
-  </div>
-
-  <div class="scan-panel" id="scanPanel">
-    <button class="scan-close" id="closeScan">✕</button>
-    <h2>Aponte a câmera para o QR Code</h2>
-    <p>Fica no rodapé da nota fiscal (NFC-e).</p>
-    <video id="video" playsinline></video>
-    <canvas id="canvas" style="display:none;"></canvas>
-    <div class="scan-status" id="scanStatus">Iniciando câmera…</div>
-  </div>
-
-  <div class="form-card" id="formCard">
-    <h2 id="formTitle">Novo insumo</h2>
-
-    <div class="match-hint" id="matchHint">
-      <b>Já existe um insumo parecido: <span id="matchName"></span></b>
-      <span id="matchDetail"></span>
-      <div class="choices">
-        <button class="btn-secondary" id="btnUpdateExisting">Atualizar preço deste</button>
-        <button class="btn-ghost" id="btnCreateAnyway">Criar como novo mesmo assim</button>
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Nome do insumo</label>
-      <input type="text" id="fNome" placeholder="Ex: Rosa vermelha">
-    </div>
-    <div class="row2">
-      <div class="field">
-        <label>Unidade de medida</label>
-        <select id="fUnidade">
-          <option value="haste">haste</option>
-          <option value="metro">metro</option>
-          <option value="unidade">unidade</option>
-          <option value="kg">kg</option>
-          <option value="folha">folha</option>
-          <option value="maço">maço</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Preço por unidade (R$)</label>
-        <input type="number" step="0.01" id="fPreco" placeholder="0,00">
-      </div>
-    </div>
-    <div class="field">
-      <label>Fornecedor (opcional)</label>
-      <input type="text" id="fFornecedor" placeholder="Ex: Ceasa SJC">
-    </div>
-
-    <div class="form-actions">
-      <button class="btn-primary" id="btnSalvar">Salvar insumo</button>
-      <button class="btn-ghost" id="btnCancelar">Cancelar</button>
-    </div>
-  </div>
-
-  <div class="list-head">
-    <h2>Cadastrados</h2>
-    <span class="count" id="count">0</span>
-  </div>
-  <div id="lista"></div>
-  <div class="empty" id="empty">Nenhum insumo ainda. Escaneie uma nota ou adicione manualmente.</div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script src="assets/js/config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="assets/js/supabase-client.js"></script>
-<script>
-let insumos = [];
-let userId = null;
-let editingId = null;
-let pendingMatchId = null;
-let stream = null;
-let scanning = false;
-
-const el = id => document.getElementById(id);
-const toast = (msg) => {
-  const t = el('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2200);
-};
-
-function normalize(s){
-  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
-}
-function similarity(a,b){
-  a = normalize(a); b = normalize(b);
-  if(a===b) return 1;
-  const m=a.length, n=b.length;
-  if(!m || !n) return 0;
-  const d = Array.from({length:m+1},(_,i)=>[i,...Array(n).fill(0)]);
-  for(let j=0;j<=n;j++) d[0][j]=j;
-  for(let i=1;i<=m;i++){
-    for(let j=1;j<=n;j++){
-      d[i][j] = a[i-1]===b[j-1] ? d[i-1][j-1] : 1+Math.min(d[i-1][j],d[i][j-1],d[i-1][j-1]);
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insumos</title>
+  <link rel="icon" href="assets/img/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.js"></script>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    header.top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 20px 20px 0;
     }
-  }
-  return 1 - d[m][n]/Math.max(m,n);
-}
-function findBestMatch(nome){
-  let best=null, bestScore=0;
-  for(const it of insumos){
-    const s = similarity(it.nome, nome);
-    if(s>bestScore){bestScore=s; best=it;}
-  }
-  return bestScore>=0.72 ? best : null;
-}
 
-async function load(){
-  const { data, error } = await supabaseClient
-    .from('insumos')
-    .select('*')
-    .order('created_at', { ascending:false });
-  if(error){ toast('Não consegui carregar os insumos'); console.error(error); return; }
-  insumos = data || [];
-  render();
-}
+    header.top img {
+      height: 30px;
+    }
 
-function render(){
-  const list = el('lista');
-  list.innerHTML = '';
-  el('count').textContent = insumos.length;
-  el('empty').style.display = insumos.length ? 'none' : 'block';
-  insumos.forEach(it=>{
-    const row = document.createElement('div');
-    row.className = 'insumo';
-    row.innerHTML = `
+    .back {
+      font-size: 13px;
+      color: var(--cinza-texto);
+      text-decoration: none;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin: 24px 0;
+      flex-wrap: wrap;
+    }
+
+    .scan-panel {
+      background: var(--verde-escuro);
+      color: var(--off-white);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      margin-bottom: 26px;
+      position: relative;
+      overflow: hidden;
+      display: none;
+    }
+
+    .scan-panel.open {
+      display: block;
+    }
+
+    .scan-panel h2 {
+      color: var(--off-white);
+      font-size: 19px;
+      margin: 0 0 4px;
+    }
+
+    .scan-panel p {
+      font-size: 13px;
+      color: var(--rosa-queimado);
+      margin: 0 0 14px;
+    }
+
+    video {
+      width: 100%;
+      border-radius: 10px;
+      background: #000;
+      display: block;
+    }
+
+    .scan-status {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: var(--rosa-queimado);
+      margin-top: 10px;
+      min-height: 16px;
+    }
+
+    .scan-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      color: var(--off-white);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .form-card {
+      background: var(--rosa-queimado);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      margin-bottom: 26px;
+      border: 1px solid var(--linha);
+      display: none;
+    }
+
+    .form-card.open {
+      display: block;
+    }
+
+    .form-card h2 {
+      font-size: 18px;
+      margin: 2px 0 16px;
+    }
+
+    .match-hint {
+      background: var(--amarelo);
+      border: 1px solid #E6C878;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 13px;
+      margin-bottom: 14px;
+      color: #6b5218;
+      display: none;
+    }
+
+    .match-hint.open {
+      display: block;
+    }
+
+    .match-hint b {
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .match-hint .choices {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .match-hint button {
+      font-size: 12.5px;
+      padding: 7px 12px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .list-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+    }
+
+    .list-head h2 {
+      font-size: 19px;
+      margin: 0;
+    }
+
+    .count {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: #8a8378;
+    }
+
+    .insumo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 4px;
+      border-bottom: 1px solid var(--linha);
+    }
+
+    .insumo:last-child {
+      border-bottom: none;
+    }
+
+    .insumo-nome {
+      font-weight: 600;
+      font-size: 14.5px;
+    }
+
+    .insumo-meta {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: #8a8378;
+      margin-top: 3px;
+    }
+
+    .insumo-preco {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14.5px;
+      color: var(--verde-escuro);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .insumo-row-actions {
+      display: flex;
+      gap: 4px;
+      margin-left: 12px;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #8a8378;
+      padding: 6px;
+      font-size: 14px;
+      border-radius: 6px;
+    }
+
+    .icon-btn:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--carvao);
+    }
+
+    .tag-origem {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 20px;
+      background: rgba(90, 116, 87, 0.12);
+      color: var(--verde-escuro);
+      margin-left: 8px;
+      letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="top">
+    <a class="back" href="dashboard.html">← Início</a>
+    <img src="assets/img/logo.png" alt="Entre Flores">
+  </header>
+
+  <div class="wrap">
+    <div class="eyebrow" style="margin-top:16px;">ERP Floricultura · São José dos Campos</div>
+    <h1>Insumos</h1>
+    <p style="color:var(--cinza-texto);margin:0 0 8px;">Cadastre pelo QR Code da nota ou manualmente. Tudo aqui pode ser
+      editado depois.</p>
+
+    <div class="actions">
+      <button class="btn-primary" id="btnScan">Ler nota (QR Code)</button>
+      <button class="btn-secondary" id="btnManual">Adicionar manualmente</button>
+    </div>
+
+    <div class="scan-panel" id="scanPanel">
+      <button class="scan-close" id="closeScan">✕</button>
+      <h2>Aponte a câmera para o QR Code</h2>
+      <p>Fica no rodapé da nota fiscal (NFC-e).</p>
+      <video id="video" playsinline></video>
+      <canvas id="canvas" style="display:none;"></canvas>
+      <div class="scan-status" id="scanStatus">Iniciando câmera…</div>
+    </div>
+
+    <div class="form-card" id="formCard">
+      <h2 id="formTitle">Novo insumo</h2>
+
+      <div class="match-hint" id="matchHint">
+        <b>Já existe um insumo parecido: <span id="matchName"></span></b>
+        <span id="matchDetail"></span>
+        <div class="choices">
+          <button class="btn-secondary" id="btnUpdateExisting">Atualizar preço deste</button>
+          <button class="btn-ghost" id="btnCreateAnyway">Criar como novo mesmo assim</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Nome do insumo</label>
+        <input type="text" id="fNome" placeholder="Ex: Rosa vermelha">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Unidade de medida</label>
+          <select id="fUnidade">
+            <option value="haste">haste</option>
+            <option value="metro">metro</option>
+            <option value="unidade">unidade</option>
+            <option value="kg">kg</option>
+            <option value="folha">folha</option>
+            <option value="maço">maço</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Preço por unidade (R$)</label>
+          <input type="number" step="0.01" id="fPreco" placeholder="0,00">
+        </div>
+      </div>
+      <div class="field">
+        <label>Fornecedor (opcional)</label>
+        <input type="text" id="fFornecedor" placeholder="Ex: Ceasa SJC">
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-primary" id="btnSalvar">Salvar insumo</button>
+        <button class="btn-ghost" id="btnCancelar">Cancelar</button>
+      </div>
+    </div>
+
+    <div class="list-head">
+      <h2>Cadastrados</h2>
+      <span class="count" id="count">0</span>
+    </div>
+    <div id="lista"></div>
+    <div class="empty" id="empty">Nenhum insumo ainda. Escaneie uma nota ou adicione manualmente.</div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-client.js"></script>
+  <script>
+    let insumos = [];
+    let userId = null;
+    let editingId = null;
+    let pendingMatchId = null;
+    let stream = null;
+    let scanning = false;
+
+    const el = id => document.getElementById(id);
+    const toast = (msg) => {
+      const t = el('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    };
+
+    function normalize(s) {
+      return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+    }
+    function similarity(a, b) {
+      a = normalize(a); b = normalize(b);
+      if (a === b) return 1;
+      const m = a.length, n = b.length;
+      if (!m || !n) return 0;
+      const d = Array.from({ length: m + 1 }, (_, i) => [i, ...Array(n).fill(0)]);
+      for (let j = 0; j <= n; j++) d[0][j] = j;
+      for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+          d[i][j] = a[i - 1] === b[j - 1] ? d[i - 1][j - 1] : 1 + Math.min(d[i - 1][j], d[i][j - 1], d[i - 1][j - 1]);
+        }
+      }
+      return 1 - d[m][n] / Math.max(m, n);
+    }
+    function findBestMatch(nome) {
+      let best = null, bestScore = 0;
+      for (const it of insumos) {
+        const s = similarity(it.nome, nome);
+        if (s > bestScore) { bestScore = s; best = it; }
+      }
+      return bestScore >= 0.72 ? best : null;
+    }
+
+    async function load() {
+      const { data, error } = await supabaseClient
+        .from('insumos')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) { toast('Não consegui carregar os insumos'); console.error(error); return; }
+      insumos = data || [];
+      render();
+    }
+
+    function render() {
+      const list = el('lista');
+      list.innerHTML = '';
+      el('count').textContent = insumos.length;
+      el('empty').style.display = insumos.length ? 'none' : 'block';
+      insumos.forEach(it => {
+        const row = document.createElement('div');
+        row.className = 'insumo';
+        row.innerHTML = `
       <div>
-        <div class="insumo-nome">${it.nome}${it.origem==='qr' ? '<span class="tag-origem">via nota</span>' : ''}</div>
+        <div class="insumo-nome">${it.nome}${it.origem === 'qr' ? '<span class="tag-origem">via nota</span>' : ''}</div>
         <div class="insumo-meta">${it.unidade}${it.fornecedor ? ' · ' + it.fornecedor : ''}</div>
       </div>
       <div style="display:flex;align-items:center;">
@@ -244,188 +388,189 @@ function render(){
         </div>
       </div>
     `;
-    list.appendChild(row);
-  });
-  list.querySelectorAll('[data-edit]').forEach(b=>b.onclick = ()=>openEdit(b.dataset.edit));
-  list.querySelectorAll('[data-del]').forEach(b=>b.onclick = ()=>removeItem(b.dataset.del));
-}
+        list.appendChild(row);
+      });
+      list.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openEdit(b.dataset.edit));
+      list.querySelectorAll('[data-del]').forEach(b => b.onclick = () => removeItem(b.dataset.del));
+    }
 
-function openManual(prefill){
-  editingId = null;
-  pendingMatchId = null;
-  el('formTitle').textContent = 'Novo insumo';
-  el('fNome').value = prefill?.nome || '';
-  el('fUnidade').value = prefill?.unidade || 'haste';
-  el('fPreco').value = prefill?.preco || '';
-  el('fFornecedor').value = prefill?.fornecedor || '';
-  el('matchHint').classList.remove('open');
-  el('formCard').classList.add('open');
-  el('scanPanel').classList.remove('open');
-  stopCamera();
-  el('fNome').focus();
-  checkMatchOnType();
-}
-function openEdit(id){
-  const it = insumos.find(i=>i.id===id);
-  if(!it) return;
-  editingId = id;
-  pendingMatchId = null;
-  el('formTitle').textContent = 'Editar insumo';
-  el('fNome').value = it.nome;
-  el('fUnidade').value = it.unidade;
-  el('fPreco').value = it.preco;
-  el('fFornecedor').value = it.fornecedor || '';
-  el('matchHint').classList.remove('open');
-  el('formCard').classList.add('open');
-  el('scanPanel').classList.remove('open');
-  window.scrollTo({top: el('formCard').offsetTop - 20, behavior:'smooth'});
-}
-async function removeItem(id){
-  const { error } = await supabaseClient.from('insumos').delete().eq('id', id);
-  if(error){ toast('Não consegui remover'); return; }
-  insumos = insumos.filter(i=>i.id!==id);
-  render();
-  toast('Insumo removido');
-}
-function closeForm(){
-  el('formCard').classList.remove('open');
-  el('matchHint').classList.remove('open');
-  editingId = null; pendingMatchId = null;
-}
+    function openManual(prefill) {
+      editingId = null;
+      pendingMatchId = null;
+      el('formTitle').textContent = 'Novo insumo';
+      el('fNome').value = prefill?.nome || '';
+      el('fUnidade').value = prefill?.unidade || 'haste';
+      el('fPreco').value = prefill?.preco || '';
+      el('fFornecedor').value = prefill?.fornecedor || '';
+      el('matchHint').classList.remove('open');
+      el('formCard').classList.add('open');
+      el('scanPanel').classList.remove('open');
+      stopCamera();
+      el('fNome').focus();
+      checkMatchOnType();
+    }
+    function openEdit(id) {
+      const it = insumos.find(i => i.id === id);
+      if (!it) return;
+      editingId = id;
+      pendingMatchId = null;
+      el('formTitle').textContent = 'Editar insumo';
+      el('fNome').value = it.nome;
+      el('fUnidade').value = it.unidade;
+      el('fPreco').value = it.preco;
+      el('fFornecedor').value = it.fornecedor || '';
+      el('matchHint').classList.remove('open');
+      el('formCard').classList.add('open');
+      el('scanPanel').classList.remove('open');
+      window.scrollTo({ top: el('formCard').offsetTop - 20, behavior: 'smooth' });
+    }
+    async function removeItem(id) {
+      const { error } = await supabaseClient.from('insumos').delete().eq('id', id);
+      if (error) { toast('Não consegui remover'); return; }
+      insumos = insumos.filter(i => i.id !== id);
+      render();
+      toast('Insumo removido');
+    }
+    function closeForm() {
+      el('formCard').classList.remove('open');
+      el('matchHint').classList.remove('open');
+      editingId = null; pendingMatchId = null;
+    }
 
-function checkMatchOnType(){
-  el('fNome').oninput = ()=>{
-    if(editingId) return;
-    const nome = el('fNome').value.trim();
-    if(nome.length < 3){ el('matchHint').classList.remove('open'); return; }
-    const match = findBestMatch(nome);
-    if(match){
-      pendingMatchId = match.id;
-      el('matchName').textContent = match.nome;
-      el('matchDetail').textContent = `Preço atual: R$ ${Number(match.preco).toFixed(2)} (${match.unidade})`;
-      el('matchHint').classList.add('open');
-    } else {
+    function checkMatchOnType() {
+      el('fNome').oninput = () => {
+        if (editingId) return;
+        const nome = el('fNome').value.trim();
+        if (nome.length < 3) { el('matchHint').classList.remove('open'); return; }
+        const match = findBestMatch(nome);
+        if (match) {
+          pendingMatchId = match.id;
+          el('matchName').textContent = match.nome;
+          el('matchDetail').textContent = `Preço atual: R$ ${Number(match.preco).toFixed(2)} (${match.unidade})`;
+          el('matchHint').classList.add('open');
+        } else {
+          pendingMatchId = null;
+          el('matchHint').classList.remove('open');
+        }
+      };
+    }
+
+    el('btnUpdateExisting').onclick = () => {
+      if (!pendingMatchId) return;
+      editingId = pendingMatchId;
+      el('matchHint').classList.remove('open');
+      toast('Vai atualizar o insumo existente ao salvar');
+    };
+    el('btnCreateAnyway').onclick = () => {
       pendingMatchId = null;
       el('matchHint').classList.remove('open');
+    };
+
+    el('btnSalvar').onclick = async () => {
+      const nome = el('fNome').value.trim();
+      const unidade = el('fUnidade').value;
+      const preco = parseFloat(el('fPreco').value);
+      const fornecedor = el('fFornecedor').value.trim();
+      if (!nome || isNaN(preco)) {
+        toast('Preencha nome e preço');
+        return;
+      }
+      if (editingId) {
+        const { error } = await supabaseClient
+          .from('insumos')
+          .update({ nome, unidade, preco, fornecedor })
+          .eq('id', editingId);
+        if (error) { toast('Não consegui salvar'); console.error(error); return; }
+      } else {
+        const { error } = await supabaseClient
+          .from('insumos')
+          .insert({ nome, unidade, preco, fornecedor, origem: window.__lastOrigem || 'manual', user_id: userId });
+        if (error) { toast('Não consegui salvar'); console.error(error); return; }
+      }
+      window.__lastOrigem = 'manual';
+      await load();
+      closeForm();
+      toast('Insumo salvo');
+    };
+    el('btnCancelar').onclick = closeForm;
+    el('btnManual').onclick = () => openManual();
+
+    /* ---- QR scan ---- */
+    el('btnScan').onclick = async () => {
+      el('scanPanel').classList.add('open');
+      el('formCard').classList.remove('open');
+      el('scanStatus').textContent = 'Iniciando câmera…';
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        el('video').srcObject = stream;
+        el('video').play();
+        scanning = true;
+        requestAnimationFrame(tick);
+      } catch (e) {
+        el('scanStatus').textContent = 'Não consegui acessar a câmera. Verifique a permissão do navegador, ou use o cadastro manual.';
+      }
+    };
+    el('closeScan').onclick = () => {
+      el('scanPanel').classList.remove('open');
+      stopCamera();
+    };
+    function stopCamera() {
+      scanning = false;
+      if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
     }
-  };
-}
-
-el('btnUpdateExisting').onclick = ()=>{
-  if(!pendingMatchId) return;
-  editingId = pendingMatchId;
-  el('matchHint').classList.remove('open');
-  toast('Vai atualizar o insumo existente ao salvar');
-};
-el('btnCreateAnyway').onclick = ()=>{
-  pendingMatchId = null;
-  el('matchHint').classList.remove('open');
-};
-
-el('btnSalvar').onclick = async ()=>{
-  const nome = el('fNome').value.trim();
-  const unidade = el('fUnidade').value;
-  const preco = parseFloat(el('fPreco').value);
-  const fornecedor = el('fFornecedor').value.trim();
-  if(!nome || isNaN(preco)){
-    toast('Preencha nome e preço');
-    return;
-  }
-  if(editingId){
-    const { error } = await supabaseClient
-      .from('insumos')
-      .update({ nome, unidade, preco, fornecedor })
-      .eq('id', editingId);
-    if(error){ toast('Não consegui salvar'); console.error(error); return; }
-  } else {
-    const { error } = await supabaseClient
-      .from('insumos')
-      .insert({ nome, unidade, preco, fornecedor, origem: window.__lastOrigem || 'manual', user_id: userId });
-    if(error){ toast('Não consegui salvar'); console.error(error); return; }
-  }
-  window.__lastOrigem = 'manual';
-  await load();
-  closeForm();
-  toast('Insumo salvo');
-};
-el('btnCancelar').onclick = closeForm;
-el('btnManual').onclick = ()=>openManual();
-
-/* ---- QR scan ---- */
-el('btnScan').onclick = async ()=>{
-  el('scanPanel').classList.add('open');
-  el('formCard').classList.remove('open');
-  el('scanStatus').textContent = 'Iniciando câmera…';
-  try{
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    el('video').srcObject = stream;
-    el('video').play();
-    scanning = true;
-    requestAnimationFrame(tick);
-  }catch(e){
-    el('scanStatus').textContent = 'Não consegui acessar a câmera. Verifique a permissão do navegador, ou use o cadastro manual.';
-  }
-};
-el('closeScan').onclick = ()=>{
-  el('scanPanel').classList.remove('open');
-  stopCamera();
-};
-function stopCamera(){
-  scanning = false;
-  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; }
-}
-function tick(){
-  if(!scanning) return;
-  const video = el('video'), canvas = el('canvas');
-  if(video.readyState === video.HAVE_ENOUGH_DATA){
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const imageData = ctx.getImageData(0,0,canvas.width, canvas.height);
-    const code = jsQR(imageData.data, imageData.width, imageData.height);
-    if(code){
-      handleQrResult(code.data);
-      return;
+    function tick() {
+      if (!scanning) return;
+      const video = el('video'), canvas = el('canvas');
+      if (video.readyState === video.HAVE_ENOUGH_DATA) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imageData.data, imageData.width, imageData.height);
+        if (code) {
+          handleQrResult(code.data);
+          return;
+        }
+      }
+      requestAnimationFrame(tick);
     }
-  }
-  requestAnimationFrame(tick);
-}
-function handleQrResult(url){
-  stopCamera();
-  el('scanStatus').textContent = 'QR lido! Processando…';
-  // NFC-e SP costuma ter a chave de 44 dígitos no parâmetro p= da URL
-  const match = url.match(/p=(\d{44})/) || url.match(/(\d{44})/);
-  const chave = match ? match[1] : null;
+    function handleQrResult(url) {
+      stopCamera();
+      el('scanStatus').textContent = 'QR lido! Processando…';
+      // NFC-e SP costuma ter a chave de 44 dígitos no parâmetro p= da URL
+      const match = url.match(/p=(\d{44})/) || url.match(/(\d{44})/);
+      const chave = match ? match[1] : null;
 
-  setTimeout(()=>{
-    el('scanPanel').classList.remove('open');
-    if(chave){
-      // A busca automática dos itens da nota depende de uma consulta à
-      // SEFAZ-SP (ou um provedor tipo Nuvem Fiscal) feita no backend —
-      // isso ainda não está implementado. Por ora, identificamos a nota
-      // e pré-preenchemos o formulário para confirmação manual.
-      window.__lastOrigem = 'qr';
-      openManual({
-        nome: '',
-        unidade: 'haste',
-        preco: '',
-        fornecedor: 'Nota lida via QR · chave ' + chave.slice(-6)
-      });
-      toast('Nota identificada — confirme os itens abaixo');
-    } else {
-      toast('Não reconheci essa nota — cadastre manualmente');
-      openManual();
+      setTimeout(() => {
+        el('scanPanel').classList.remove('open');
+        if (chave) {
+          // A busca automática dos itens da nota depende de uma consulta à
+          // SEFAZ-SP (ou um provedor tipo Nuvem Fiscal) feita no backend —
+          // isso ainda não está implementado. Por ora, identificamos a nota
+          // e pré-preenchemos o formulário para confirmação manual.
+          window.__lastOrigem = 'qr';
+          openManual({
+            nome: '',
+            unidade: 'haste',
+            preco: '',
+            fornecedor: 'Nota lida via QR · chave ' + chave.slice(-6)
+          });
+          toast('Nota identificada — confirme os itens abaixo');
+        } else {
+          toast('Não reconheci essa nota — cadastre manualmente');
+          openManual();
+        }
+      }, 400);
     }
-  }, 400);
-}
 
-(async () => {
-  const session = await requireAuth();
-  if(!session) return;
-  userId = session.user.id;
-  load();
-})();
-</script>
+    (async () => {
+      const session = await requireAuth();
+      if (!session) return;
+      userId = session.user.id;
+      load();
+    })();
+  </script>
 </body>
+
 </html>
