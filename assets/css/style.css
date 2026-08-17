@@ -1,1 +1,137 @@
+/* ============================================================
+   Entre Flores · ERP — tokens de marca
+   Extraído da identidade visual (Paleta de Cores, Tipografia)
+   ============================================================ */
+:root{
+  /* paleta oficial */
+  --rosa-queimado: #E1CDC6;
+  --off-white:     #FCFAF5;
+  --vinho:         #895056;
+  --verde:         #5A7457;
+  --amarelo:       #FAE4BB;
 
+  /* variações de apoio (derivadas, não fazem parte do book oficial) */
+  --verde-escuro:  #3F5240;
+  --vinho-escuro:  #6E3F44;
+  --carvao:        #2A2823;
+  --linha:         #E3D9CC;
+  --cinza-texto:   #6B655B;
+  --erro:          #B5473A;
+
+  --radius: 12px;
+  --radius-lg: 18px;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--off-white);
+  color:var(--carvao);
+  font-family:'Inter',sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---- tipografia ----
+   O book de marca usa uma serifada autoral (ligaturas desenhadas à mão)
+   que não está disponível como webfont gratuita. 'Fraunces' é a fonte
+   livre (Google Fonts) mais próxima em espírito — serifa old-style,
+   orgânica, elegante — e é a que usamos em todo o sistema.
+   Se algum dia vocês tiverem os arquivos da fonte original da agência,
+   basta trocar o @font-face nesta seção. */
+h1,h2,h3,.brand-font{
+  font-family:'Fraunces',serif;
+  font-weight:500;
+  letter-spacing:-0.01em;
+  color:var(--verde-escuro);
+}
+.mono, .valor, .eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+}
+.eyebrow{
+  font-size:11px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--verde);
+}
+
+a{color:var(--vinho);}
+
+/* ---- layout base ---- */
+.wrap{max-width:640px;margin:0 auto;padding:28px 20px 80px;}
+.center-screen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+
+/* ---- botões ---- */
+button, .btn{
+  font-family:'Inter',sans-serif;
+  font-weight:600;
+  font-size:14px;
+  border-radius:10px;
+  padding:12px 18px;
+  border:none;
+  cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
+  display:inline-block;
+  text-decoration:none;
+  text-align:center;
+}
+button:active, .btn:active{transform:scale(0.98);}
+.btn-primary{background:var(--verde-escuro);color:var(--off-white);}
+.btn-primary:hover{box-shadow:0 4px 14px rgba(63,82,64,0.25);}
+.btn-secondary{background:transparent;color:var(--verde-escuro);border:1.5px solid var(--verde-escuro);}
+.btn-secondary:hover{background:rgba(63,82,64,0.06);}
+.btn-ghost{background:transparent;color:#8a8378;font-weight:500;padding:8px 10px;}
+button:disabled{opacity:0.6;cursor:not-allowed;}
+
+/* ---- formulários ---- */
+.field{margin-bottom:14px;}
+label{display:block;font-size:12px;font-weight:600;color:#5c5648;margin-bottom:5px;letter-spacing:0.01em;}
+input, select{
+  width:100%;
+  padding:10px 12px;
+  border-radius:8px;
+  border:1.5px solid var(--linha);
+  background:var(--off-white);
+  font-family:'Inter',sans-serif;
+  font-size:14.5px;
+  color:var(--carvao);
+}
+input:focus, select:focus{outline:none;border-color:var(--verde);}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* ---- cartões ---- */
+.card{
+  background:var(--rosa-queimado);
+  border-radius:var(--radius-lg);
+  padding:22px;
+  border:1px solid var(--linha);
+}
+.card-escuro{
+  background:var(--verde-escuro);
+  color:var(--off-white);
+  border-radius:var(--radius-lg);
+  padding:22px;
+}
+.card-escuro h2{color:var(--off-white);}
+
+/* ---- toast ---- */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:var(--carvao);color:var(--off-white);
+  padding:11px 18px;border-radius:8px;font-size:13.5px;
+  opacity:0;pointer-events:none;transition:opacity .25s ease, transform .25s ease;
+  font-weight:500;
+  z-index:100;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-6px);}
+
+.empty{text-align:center;padding:40px 20px;color:#8a8378;font-size:14px;}
+
+.logo{display:block;margin:0 auto;}
+
+.error-msg{color:var(--erro);font-size:13px;margin-top:8px;}
