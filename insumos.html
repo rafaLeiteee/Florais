@@ -10,9 +10,67 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
     rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.js"></script>
   <link rel="stylesheet" href="assets/css/style.css">
   <style>
+    .calc-panel {
+      background: var(--verde-escuro);
+      color: var(--off-white);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      margin-bottom: 26px;
+    }
+
+    .calc-panel h2 {
+      color: var(--off-white);
+      font-size: 18px;
+      margin: 0 0 4px;
+    }
+
+    .calc-panel p {
+      font-size: 13px;
+      color: var(--rosa-queimado);
+      margin: 0 0 16px;
+    }
+
+    .calc-panel label {
+      color: var(--rosa-queimado);
+    }
+
+    .calc-resultado {
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13.5px;
+      display: none;
+    }
+
+    .calc-resultado.show {
+      display: block;
+    }
+
+    .calc-resultado .linha {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+    }
+
+    .calc-resultado .destaque {
+      color: var(--amarelo);
+      font-weight: 600;
+    }
+
+    .calc-usar {
+      margin-top: 12px;
+      width: 100%;
+      background: var(--off-white);
+    }
+
+    .calc-usar:hover {
+      background: var(--linha);
+    }
+
     header.top {
       display: flex;
       justify-content: space-between;
@@ -37,60 +95,6 @@
       gap: 10px;
       margin: 24px 0;
       flex-wrap: wrap;
-    }
-
-    .scan-panel {
-      background: var(--verde-escuro);
-      color: var(--off-white);
-      border-radius: var(--radius-lg);
-      padding: 22px;
-      margin-bottom: 26px;
-      position: relative;
-      overflow: hidden;
-      display: none;
-    }
-
-    .scan-panel.open {
-      display: block;
-    }
-
-    .scan-panel h2 {
-      color: var(--off-white);
-      font-size: 19px;
-      margin: 0 0 4px;
-    }
-
-    .scan-panel p {
-      font-size: 13px;
-      color: var(--rosa-queimado);
-      margin: 0 0 14px;
-    }
-
-    video {
-      width: 100%;
-      border-radius: 10px;
-      background: #000;
-      display: block;
-    }
-
-    .scan-status {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
-      color: var(--rosa-queimado);
-      margin-top: 10px;
-      min-height: 16px;
-    }
-
-    .scan-close {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      background: none;
-      border: none;
-      color: var(--off-white);
-      font-size: 18px;
-      cursor: pointer;
-      padding: 4px;
     }
 
     .form-card {
@@ -239,23 +243,31 @@
   </header>
 
   <div class="wrap">
-    <div class="eyebrow" style="margin-top:16px;">ERP Floricultura · São José dos Campos</div>
+    <div class="eyebrow" style="margin-top:16px;">Florais · ERP Floricultura</div>
     <h1>Insumos</h1>
-    <p style="color:var(--cinza-texto);margin:0 0 8px;">Cadastre pelo QR Code da nota ou manualmente. Tudo aqui pode ser
-      editado depois.</p>
 
     <div class="actions">
-      <button class="btn-primary" id="btnScan">Ler nota (QR Code)</button>
-      <button class="btn-secondary" id="btnManual">Adicionar manualmente</button>
+      <button class="btn-secondary" id="btnManual">Adicionar insumo</button>
+      <button class="btn-secondary" id="btnCalc">Calculadora de apoio</button>
     </div>
 
-    <div class="scan-panel" id="scanPanel">
-      <button class="scan-close" id="closeScan">✕</button>
-      <h2>Aponte a câmera para o QR Code</h2>
-      <p>Fica no rodapé da nota fiscal (NFC-e).</p>
-      <video id="video" playsinline></video>
-      <canvas id="canvas" style="display:none;"></canvas>
-      <div class="scan-status" id="scanStatus">Iniciando câmera…</div>
+    <div class="calc-panel" id="calcPanel" hidden>
+      <h2>Calculadora de valor individual</h2>
+      <p>Comprou em lote? Informe o total pago e a quantidade pra achar o preço por unidade.</p>
+      <div class="row2">
+        <div class="field">
+          <label>Preço total pago (R$)</label>
+          <input type="number" step="0.01" id="cTotal" placeholder="Ex: 45,00">
+        </div>
+        <div class="field">
+          <label>Quantidade comprada</label>
+          <input type="number" step="0.01" id="cQtd" placeholder="Ex: 12">
+        </div>
+      </div>
+      <div class="calc-resultado" id="calcResultado">
+        <div class="linha"><span>Preço por unidade</span><span class="destaque" id="calcUnitario">—</span></div>
+      </div>
+      <button class="btn-secondary calc-usar" id="btnUsarCalculo">Usar este valor no cadastro</button>
     </div>
 
     <div class="form-card" id="formCard">
@@ -283,17 +295,20 @@
             <option value="unidade">unidade</option>
             <option value="kg">kg</option>
             <option value="folha">folha</option>
-            <option value="maço">maço</option>
           </select>
         </div>
         <div class="field">
           <label>Preço por unidade (R$)</label>
           <input type="number" step="0.01" id="fPreco" placeholder="0,00">
         </div>
+        <div class="field">
+          <label>Perda esperada (%)</label>
+          <input type="number" step="1" id="fPerda" placeholder="10">
+        </div>
       </div>
       <div class="field">
         <label>Fornecedor (opcional)</label>
-        <input type="text" id="fFornecedor" placeholder="Ex: Ceasa SJC">
+        <input type="text" id="fFornecedor" placeholder="Ex: CEAGESP">
       </div>
 
       <div class="form-actions">
@@ -307,7 +322,7 @@
       <span class="count" id="count">0</span>
     </div>
     <div id="lista"></div>
-    <div class="empty" id="empty">Nenhum insumo ainda. Escaneie uma nota ou adicione manualmente.</div>
+    <div class="empty" id="empty">Nenhum insumo ainda.</div>
   </div>
 
   <div class="toast" id="toast"></div>
@@ -321,7 +336,6 @@
     let editingId = null;
     let pendingMatchId = null;
     let stream = null;
-    let scanning = false;
 
     const el = id => document.getElementById(id);
     const toast = (msg) => {
@@ -377,7 +391,7 @@
         row.className = 'insumo';
         row.innerHTML = `
       <div>
-        <div class="insumo-nome">${it.nome}${it.origem === 'qr' ? '<span class="tag-origem">via nota</span>' : ''}</div>
+        <div class="insumo-nome">${it.nome}</div>
         <div class="insumo-meta">${it.unidade}${it.fornecedor ? ' · ' + it.fornecedor : ''}</div>
       </div>
       <div style="display:flex;align-items:center;">
@@ -401,11 +415,10 @@
       el('fNome').value = prefill?.nome || '';
       el('fUnidade').value = prefill?.unidade || 'haste';
       el('fPreco').value = prefill?.preco || '';
+      el('fPerda').value = prefill?.perda || '';
       el('fFornecedor').value = prefill?.fornecedor || '';
       el('matchHint').classList.remove('open');
       el('formCard').classList.add('open');
-      el('scanPanel').classList.remove('open');
-      stopCamera();
       el('fNome').focus();
       checkMatchOnType();
     }
@@ -418,10 +431,10 @@
       el('fNome').value = it.nome;
       el('fUnidade').value = it.unidade;
       el('fPreco').value = it.preco;
+      el('fPerda').value = it.perda;
       el('fFornecedor').value = it.fornecedor || '';
       el('matchHint').classList.remove('open');
       el('formCard').classList.add('open');
-      el('scanPanel').classList.remove('open');
       window.scrollTo({ top: el('formCard').offsetTop - 20, behavior: 'smooth' });
     }
     async function removeItem(id) {
@@ -467,24 +480,25 @@
     };
 
     el('btnSalvar').onclick = async () => {
-      const nome = el('fNome').value.trim();
-      const unidade = el('fUnidade').value;
-      const preco = parseFloat(el('fPreco').value);
-      const fornecedor = el('fFornecedor').value.trim();
-      if (!nome || isNaN(preco)) {
+      const _nome = el('fNome').value.trim();
+      const _unidade = el('fUnidade').value;
+      const _preco = parseFloat(el('fPreco').value);
+      const _perda = parseInt(el('fPerda').value);
+      const _fornecedor = el('fFornecedor').value.trim();
+      if (!_nome || isNaN(_preco)) {
         toast('Preencha nome e preço');
         return;
       }
       if (editingId) {
         const { error } = await supabaseClient
           .from('insumos')
-          .update({ nome, unidade, preco, fornecedor })
+          .update({ nome: _nome, unidade: _unidade, preco: _preco, perda: _perda, fornecedor: _fornecedor })
           .eq('id', editingId);
         if (error) { toast('Não consegui salvar'); console.error(error); return; }
       } else {
         const { error } = await supabaseClient
           .from('insumos')
-          .insert({ nome, unidade, preco, fornecedor, origem: window.__lastOrigem || 'manual', user_id: userId });
+          .insert({ nome: _nome, unidade: _unidade, preco: _preco, perda: _perda, fornecedor: _fornecedor, origem: window.__lastOrigem || 'manual', user_id: userId });
         if (error) { toast('Não consegui salvar'); console.error(error); return; }
       }
       window.__lastOrigem = 'manual';
@@ -495,74 +509,74 @@
     el('btnCancelar').onclick = closeForm;
     el('btnManual').onclick = () => openManual();
 
-    /* ---- QR scan ---- */
-    el('btnScan').onclick = async () => {
-      el('scanPanel').classList.add('open');
-      el('formCard').classList.remove('open');
-      el('scanStatus').textContent = 'Iniciando câmera…';
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-        el('video').srcObject = stream;
-        el('video').play();
-        scanning = true;
-        requestAnimationFrame(tick);
-      } catch (e) {
-        el('scanStatus').textContent = 'Não consegui acessar a câmera. Verifique a permissão do navegador, ou use o cadastro manual.';
-      }
+    el('btnCalc').onclick = () => {
+      const resultado = el('calcPanel');
+      resultado.hidden = !resultado.hidden;
     };
-    el('closeScan').onclick = () => {
-      el('scanPanel').classList.remove('open');
-      stopCamera();
-    };
-    function stopCamera() {
-      scanning = false;
-      if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-    }
-    function tick() {
-      if (!scanning) return;
-      const video = el('video'), canvas = el('canvas');
-      if (video.readyState === video.HAVE_ENOUGH_DATA) {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const code = jsQR(imageData.data, imageData.width, imageData.height);
-        if (code) {
-          handleQrResult(code.data);
-          return;
-        }
-      }
-      requestAnimationFrame(tick);
-    }
-    function handleQrResult(url) {
-      stopCamera();
-      el('scanStatus').textContent = 'QR lido! Processando…';
-      // NFC-e SP costuma ter a chave de 44 dígitos no parâmetro p= da URL
-      const match = url.match(/p=(\d{44})/) || url.match(/(\d{44})/);
-      const chave = match ? match[1] : null;
 
-      setTimeout(() => {
-        el('scanPanel').classList.remove('open');
-        if (chave) {
-          // A busca automática dos itens da nota depende de uma consulta à
-          // SEFAZ-SP (ou um provedor tipo Nuvem Fiscal) feita no backend —
-          // isso ainda não está implementado. Por ora, identificamos a nota
-          // e pré-preenchemos o formulário para confirmação manual.
-          window.__lastOrigem = 'qr';
-          openManual({
-            nome: '',
-            unidade: 'haste',
-            preco: '',
-            fornecedor: 'Nota lida via QR · chave ' + chave.slice(-6)
-          });
-          toast('Nota identificada — confirme os itens abaixo');
-        } else {
-          toast('Não reconheci essa nota — cadastre manualmente');
-          openManual();
-        }
-      }, 400);
+    /* ---- calculadora de valor individual ---- */
+    function atualizarCalculo() {
+      const total = parseFloat(el('cTotal').value);
+      const qtd = parseFloat(el('cQtd').value);
+      const resultado = el('calcResultado');
+      if (!isNaN(total) && !isNaN(qtd) && qtd > 0) {
+        const unitario = total / qtd;
+        el('calcUnitario').textContent = 'R$ ' + unitario.toFixed(2);
+        resultado.classList.add('show');
+      } else {
+        resultado.classList.remove('show');
+      }
     }
+    el('cTotal').oninput = atualizarCalculo;
+    el('cQtd').oninput = atualizarCalculo;
+
+    el('btnUsarCalculo').onclick = () => {
+      const total = parseFloat(el('cTotal').value);
+      const qtd = parseFloat(el('cQtd').value);
+      if (isNaN(total) || isNaN(qtd) || qtd <= 0) {
+        toast('Preencha o total pago e a quantidade primeiro');
+        return;
+      }
+      const unitario = (total / qtd).toFixed(2);
+      if (!el('formCard').classList.contains('open')) {
+        openManual({ preco: unitario });
+      } else {
+        el('fPreco').value = unitario;
+      }
+      toast('Valor aplicado ao cadastro');
+    };
+
+    /* ---- calculadora de valor individual ---- */
+    function atualizarCalculo() {
+      const total = parseFloat(el('cTotal').value);
+      const qtd = parseFloat(el('cQtd').value);
+      const resultado = el('calcResultado');
+      if (!isNaN(total) && !isNaN(qtd) && qtd > 0) {
+        const unitario = total / qtd;
+        el('calcUnitario').textContent = 'R$ ' + unitario.toFixed(2);
+        resultado.classList.add('show');
+      } else {
+        resultado.classList.remove('show');
+      }
+    }
+    el('cTotal').oninput = atualizarCalculo;
+    el('cQtd').oninput = atualizarCalculo;
+
+    el('btnUsarCalculo').onclick = () => {
+      const total = parseFloat(el('cTotal').value);
+      const qtd = parseFloat(el('cQtd').value);
+      if (isNaN(total) || isNaN(qtd) || qtd <= 0) {
+        toast('Preencha o total pago e a quantidade primeiro');
+        return;
+      }
+      const unitario = (total / qtd).toFixed(2);
+      if (!el('formCard').classList.contains('open')) {
+        openManual({ preco: unitario });
+      } else {
+        el('fPreco').value = unitario;
+      }
+      toast('Valor aplicado ao cadastro');
+    };
 
     (async () => {
       const session = await requireAuth();
