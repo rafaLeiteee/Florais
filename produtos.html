@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produtos · Florais ERP</title>
+  <link rel="icon" href="assets/img/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com [fonts.googleapis.com]">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap [fonts.googleapis.com]"
+    rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    header.top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 20px 20px 0;
+    }
+
+    header.top img {
+      height: 30px;
+    }
+
+    .back {
+      font-size: 13px;
+      color: var(--cinza-texto);
+      text-decoration: none;
+    }
+
+    .gear {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px 6px;
+      color: var(--cinza-texto);
+    }
+
+    .wrap {
+      padding-bottom: 140px;
+    }
+
+    /* espaço pra barra fixa de preço */
+
+    /* ---- banner de config obrigatória ---- */
+    .banner-config {
+      background: var(--amarelo);
+      border: 1px solid #E6C878;
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      margin: 20px 0;
+      font-size: 13.5px;
+      color: #6b5218;
+      display: none;
+    }
+
+    .banner-config.show {
+      display: block;
+    }
+
+    .banner-config button {
+      margin-top: 10px;
+    }
+
+    /* ---- painel de configurações ---- */
+    .config-panel {
+      background: var(--verde-escuro);
+      color: var(--off-white);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      margin: 20px 0;
+      display: none;
+    }
+
+    .config-panel.open {
+      display: block;
+    }
+
+    .config-panel h2 {
+      color: var(--off-white);
+      font-size: 18px;
+      margin: 0 0 4px;
+    }
+
+    .config-panel p {
+      font-size: 13px;
+      color: var(--rosa-queimado);
+      margin: 0 0 16px;
+    }
+
+    .config-panel label {
+      color: var(--rosa-queimado);
+    }
+
+    .config-panel .form-actions {
+      margin-top: 6px;
+    }
+
+    /* ---- lista de produtos salvos ---- */
+    .list-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin: 24px 0 10px;
+    }
+
+    .list-head h2 {
+      font-size: 19px;
+      margin: 0;
+    }
+
+    .count {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: #8a8378;
+    }
+
+    .produto {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 4px;
+      border-bottom: 1px solid var(--linha);
+    }
+
+    .produto:last-child {
+      border-bottom: none;
+    }
+
+    .produto-nome {
+      font-weight: 600;
+      font-size: 14.5px;
+    }
+
+    .produto-meta {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      color: #8a8378;
+      margin-top: 3px;
+    }
+
+    .produto-preco {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 15px;
+      color: var(--verde-escuro);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #8a8378;
+      padding: 6px;
+      font-size: 14px;
+      border-radius: 6px;
+    }
+
+    .icon-btn:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--carvao);
+    }
+
+    .produto-acoes {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 10px;
+    }
+
+    /* ---- montagem do produto ---- */
+    .build-card {
+      background: var(--rosa-queimado);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      margin: 20px 0;
+      display: none;
+    }
+
+    .build-card.open {
+      display: block;
+    }
+
+    .build-card h2 {
+      font-size: 18px;
+      margin: 2px 0 16px;
+    }
+
+    .busca-insumo {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .lista-sugestoes {
+      max-height: 260px;
+      overflow-y: auto;
+      border-radius: 10px;
+      background: var(--off-white);
+      border: 1px solid var(--linha);
+      margin-top: 6px;
+    }
+
+    .sugestao {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--linha);
+    }
+
+    .sugestao:last-child {
+      border-bottom: none;
+    }
+
+    .sugestao:active {
+      background: rgba(90, 116, 87, 0.08);
+    }
+
+    .sugestao-nome {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .sugestao-meta {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11.5px;
+      color: #8a8378;
+    }
+
+    .itens-selecionados {
+      margin-top: 16px;
+    }
+
+    .item-sel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--off-white);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+
+    .item-sel-nome {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .item-sel-unidade {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px;
+      color: #8a8378;
+    }
+
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stepper button {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border-radius: 8px;
+      background: var(--verde-escuro);
+      color: var(--off-white);
+      font-size: 16px;
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    .stepper input {
+      width: 52px;
+      text-align: center;
+      padding: 6px 4px;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .item-sel-remove {
+      background: none;
+      border: none;
+      color: var(--erro);
+      font-size: 16px;
+      cursor: pointer;
+      padding: 4px 6px;
+      margin-left: 4px;
+    }
+
+    /* ---- barra fixa de preço ---- */
+    .price-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--verde-escuro);
+      color: var(--off-white);
+      padding: 14px 20px calc(14px + env(safe-area-inset-bottom));
+      display: none;
+      z-index: 50;
+      box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .price-bar.show {
+      display: block;
+    }
+
+    .price-bar-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .price-bar .rotulo {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--rosa-queimado);
+    }
+
+    .price-bar .valor {
+      font-family: 'Fraunces', serif;
+      font-size: 26px;
+      font-weight: 600;
+    }
+
+    .price-bar-botoes {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .price-bar button {
+      background: var(--off-white);
+      color: var(--verde-escuro);
+      white-space: nowrap;
+    }
+
+    .price-bar button:disabled {
+      opacity: 0.5;
+    }
+
+    .price-bar .btn-ghost {
+      background: transparent;
+      color: var(--rosa-queimado);
+      padding: 8px 10px;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 32px 20px;
+      color: #8a8378;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="top">
+    <a class="back" href="dashboard.html">← Início</a>
+    <img src="assets/img/logo.png" alt="Florais">
+    <button class="gear" id="btnConfig" title="Configurações">⚙︎</button>
+  </header>
+
+  <div class="wrap">
+    <div class="eyebrow" style="margin-top:16px;">Florais ERP · São José dos Campos</div>
+    <h1>Produtos</h1>
+    <p style="color:var(--cinza-texto);margin:0;">Escolha os insumos e a quantidade — o preço certo sai sozinho.</p>
+
+    <div class="banner-config" id="bannerConfig">
+      Antes de montar o primeiro produto, configure a taxa da maquininha e os impostos.
+      <div><button class="btn-primary" id="btnAbrirConfigBanner">Configurar agora</button></div>
+    </div>
+
+    <div class="config-panel" id="configPanel">
+      <h2>Configurações gerais</h2>
+      <p>Valem pra todos os produtos. Cada produto tem a própria margem e mão de obra.</p>
+      <div class="row2">
+        <div class="field">
+          <label>Taxa da maquininha (%)</label>
+          <input type="number" step="0.1" id="cfgTaxa" placeholder="Ex: 3,5">
+        </div>
+        <div class="field">
+          <label>Impostos (%)</label>
+          <input type="number" step="0.1" id="cfgImpostos" placeholder="Ex: 6">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-primary" id="btnSalvarConfig">Salvar configurações</button>
+        <button class="btn-ghost" id="btnFecharConfig">Fechar</button>
+      </div>
+    </div>
+
+    <div class="actions" style="display:flex;gap:10px;margin:20px 0;">
+      <button class="btn-primary" id="btnNovoProduto">Novo produto</button>
+    </div>
+
+    <div class="build-card" id="buildCard">
+      <h2 id="buildTitle">Montar produto</h2>
+      <div class="field">
+        <label>Nome do produto</label>
+        <input type="text" id="pNome" placeholder="Ex: Buquê Rosa & Astromélia">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Margem deste produto (%)</label>
+          <input type="number" step="0.1" id="pMargem" placeholder="Ex: 30">
+        </div>
+        <div class="field">
+          <label>Mão de obra deste produto (R$)</label>
+          <input type="number" step="0.01" id="pMaoObra" placeholder="Ex: 15,00">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Adicionar insumo</label>
+        <div class="busca-insumo">
+          <input type="text" id="buscaInsumo" placeholder="Buscar insumo cadastrado…">
+          <div class="lista-sugestoes" id="listaSugestoes"></div>
+        </div>
+      </div>
+
+      <div class="itens-selecionados" id="itensSelecionados"></div>
+      <div class="empty" id="itensVazio">Nenhum insumo adicionado ainda.</div>
+    </div>
+
+    <div class="list-head">
+      <h2>Produtos salvos</h2>
+      <span class="count" id="count">0</span>
+    </div>
+    <div id="lista"></div>
+    <div class="empty" id="emptyLista">Nenhum produto ainda. Toque em "Novo produto" pra começar.</div>
+  </div>
+
+  <div class="price-bar" id="priceBar">
+    <div class="price-bar-inner">
+      <div>
+        <div class="rotulo">Preço sugerido</div>
+        <div class="valor" id="precoSugerido">R$ 0,00</div>
+      </div>
+      <div class="price-bar-botoes">
+        <button class="btn-ghost" id="btnCancelarProduto">Cancelar</button>
+        <button class="btn-primary" id="btnSalvarProduto" disabled>Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2 [cdn.jsdelivr.net]"></script>
+  <script src="assets/js/supabase-client.js"></script>
+  <script>
+    const el = id => document.getElementById(id);
+    const toast = (msg) => {
+      const t = el('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    };
+
+    let userId = null;
+    let insumosDisponiveis = [];
+    let produtos = [];
+    let config = null; // { taxa_maquininha, impostos }
+    let itensAtuais = []; // [{ insumo_id, nome, unidade, preco, perda, quantidade }]
+    let editingProdutoId = null;
+
+    /* ---------------- carregar dados ---------------- */
+    async function carregarTudo() {
+      const [{ data: insumos }, { data: prods }, { data: cfg }] = await Promise.all([
+        supabaseClient.from('insumos').select('*').order('nome'),
+        supabaseClient.from('produtos').select('*, produto_itens(id, quantidade, insumos(id, nome, unidade, preco, perda))').order('created_at', { ascending: false }),
+        supabaseClient.from('config_financeiro').select('*').eq('user_id', userId).maybeSingle()
+      ]);
+      insumosDisponiveis = insumos || [];
+      produtos = prods || [];
+      config = cfg || null;
+      renderProdutos();
+      atualizarBannerConfig();
+      if (config) preencherFormConfig(config);
+    }
+
+    function atualizarBannerConfig() {
+      const semConfig = !config;
+      el('bannerConfig').classList.toggle('show', semConfig);
+      el('btnNovoProduto').disabled = semConfig;
+    }
+
+    /* ---------------- configurações gerais (taxa + impostos) ---------------- */
+    function preencherFormConfig(cfg) {
+      el('cfgTaxa').value = cfg.taxa_maquininha ?? '';
+      el('cfgImpostos').value = cfg.impostos ?? '';
+    }
+    el('btnConfig').onclick = () => el('configPanel').classList.toggle('open');
+    el('btnAbrirConfigBanner').onclick = () => el('configPanel').classList.add('open');
+    el('btnFecharConfig').onclick = () => el('configPanel').classList.remove('open');
+
+    el('btnSalvarConfig').onclick = async () => {
+      const taxa_maquininha = parseFloat(el('cfgTaxa').value);
+      const impostos = parseFloat(el('cfgImpostos').value);
+      if (isNaN(taxa_maquininha) || isNaN(impostos)) {
+        toast('Preencha os dois campos');
+        return;
+      }
+      const { data, error } = await supabaseClient
+        .from('config_financeiro')
+        .upsert({ user_id: userId, taxa_maquininha, impostos })
+        .select()
+        .single();
+      if (error) { toast('Não consegui salvar'); console.error(error); return; }
+      config = data;
+      atualizarBannerConfig();
+      el('configPanel').classList.remove('open');
+      recalcularPreco();
+      toast('Configurações salvas');
+    };
+
+    /* ---------------- montagem / edição do produto ---------------- */
+    el('btnNovoProduto').onclick = () => abrirMontagem();
+    el('btnCancelarProduto').onclick = () => fecharMontagem();
+
+    function abrirMontagem() {
+      editingProdutoId = null;
+      itensAtuais = [];
+      el('buildTitle').textContent = 'Montar produto';
+      el('btnSalvarProduto').textContent = 'Salvar';
+      el('pNome').value = '';
+      el('pMargem').value = '';
+      el('pMaoObra').value = '';
+      el('buscaInsumo').value = '';
+      el('listaSugestoes').innerHTML = '';
+      el('buildCard').classList.add('open');
+      el('priceBar').classList.add('show');
+      renderItensSelecionados();
+      recalcularPreco();
+      window.scrollTo({ top: el('buildCard').offsetTop - 20, behavior: 'smooth' });
+    }
+
+    function abrirEdicao(produtoId) {
+      const p = produtos.find(x => x.id === produtoId);
+      if (!p) return;
+      editingProdutoId = produtoId;
+      itensAtuais = (p.produto_itens || [])
+        .filter(it => it.insumos)
+        .map(it => ({
+          insumo_id: it.insumos.id,
+          nome: it.insumos.nome,
+          unidade: it.insumos.unidade,
+          preco: Number(it.insumos.preco),
+          perda: Number(it.insumos.perda || 0),
+          quantidade: Number(it.quantidade)
+        }));
+      el('buildTitle').textContent = 'Editar produto';
+      el('btnSalvarProduto').textContent = 'Salvar alterações';
+      el('pNome').value = p.nome;
+      el('pMargem').value = p.margem_contribuicao ?? '';
+      el('pMaoObra').value = p.mao_obra ?? '';
+      el('buscaInsumo').value = '';
+      el('listaSugestoes').innerHTML = '';
+      el('buildCard').classList.add('open');
+      el('priceBar').classList.add('show');
+      renderItensSelecionados();
+      recalcularPreco();
+      window.scrollTo({ top: el('buildCard').offsetTop - 20, behavior: 'smooth' });
+    }
+
+    function fecharMontagem() {
+      editingProdutoId = null;
+      itensAtuais = [];
+      el('buildCard').classList.remove('open');
+      el('priceBar').classList.remove('show');
+    }
+
+    el('buscaInsumo').oninput = () => {
+      const termo = el('buscaInsumo').value.trim().toLowerCase();
+      const box = el('listaSugestoes');
+      if (!termo) { box.innerHTML = ''; return; }
+      const resultados = insumosDisponiveis.filter(i => i.nome.toLowerCase().includes(termo));
+      box.innerHTML = resultados.map(i => `
+    <div class="sugestao" data-id="${i.id}">
+      <div>
+        <div class="sugestao-nome">${i.nome}</div>
+        <div class="sugestao-meta">${i.unidade} · R$ ${Number(i.preco).toFixed(2)}</div>
+      </div>
+      <span style="font-size:20px;color:var(--verde-escuro);">＋</span>
+    </div>
+  `).join('') || '<div class="sugestao">Nenhum insumo encontrado</div>';
+      box.querySelectorAll('[data-id]').forEach(row => {
+        row.onclick = () => adicionarItem(row.dataset.id);
+      });
+    };
+
+    function adicionarItem(insumoId) {
+      const insumo = insumosDisponiveis.find(i => i.id === insumoId);
+      if (!insumo) return;
+      const existente = itensAtuais.find(i => i.insumo_id === insumoId);
+      if (existente) {
+        existente.quantidade += 1;
+      } else {
+        itensAtuais.push({
+          insumo_id: insumo.id[insumo.id],
+          nome: insumo.nome,
+          unidade: insumo.unidade,
+          preco: Number(insumo.preco),
+          perda: Number(insumo.perda || 0),
+          quantidade: 1
+        });
+      }
+      el('buscaInsumo').value = '';
+      el('listaSugestoes').innerHTML = '';
+      renderItensSelecionados();
+      recalcularPreco();
+    }
+
+    function renderItensSelecionados() {
+      const box = el('itensSelecionados');
+      el('itensVazio').style.display = itensAtuais.length ? 'none' : 'block';
+      box.innerHTML = itensAtuais.map((it, idx) => `
+    <div class="item-sel">
+      <div>
+        <div class="item-sel-nome">${it.nome}</div>
+        <div class="item-sel-unidade">${it.unidade}</div>
+      </div>
+      <div class="stepper">
+        <button data-dec="${idx}" type="button">−</button>
+        <input type="number" step="0.1" value="${it.quantidade}" data-qtd="${idx}">
+        <button data-inc="${idx}" type="button">+</button>
+        <button class="item-sel-remove" data-rem="${idx}" type="button">✕</button>
+      </div>
+    </div>
+  `).join('');
+      box.querySelectorAll('[data-inc]').forEach(b => b.onclick = () => { itensAtuais[b.dataset.inc[b.dataset.inc]].quantidade += 1; renderItensSelecionados(); recalcularPreco(); });
+      box.querySelectorAll('[data-dec]').forEach(b => b.onclick = () => {
+        const i = b.dataset.dec;
+        itensAtuais[i].quantidade = Math.max(0.1, itensAtuais[i].quantidade - 1);
+        renderItensSelecionados(); recalcularPreco();
+      });
+      box.querySelectorAll('[data-qtd]').forEach(inp => inp.onchange = () => {
+        const i = inp.dataset.qtd;
+        const v = parseFloat(inp.value);
+        itensAtuais[i].quantidade = isNaN(v) || v <= 0 ? 0.1 : v;
+        renderItensSelecionados(); recalcularPreco();
+      });
+      box.querySelectorAll('[data-rem]').forEach(b => b.onclick = () => {
+        itensAtuais.splice(b.dataset.rem, 1);
+        renderItensSelecionados(); recalcularPreco();
+      });
+    }
+
+    el('pMargem').oninput = recalcularPreco;
+    el('pMaoObra').oninput = recalcularPreco;
+
+    /* ---------------- cálculo (a parte que o vendedor não vê) ---------------- */
+    function custoEfetivoInsumo(insumo) {
+      const perda = Number(insumo.perda || 0);
+      return perda > 0 ? Number(insumo.preco) / (1 - perda / 100) : Number(insumo.preco);
+    }
+
+    // itens: [{ insumo, quantidade }] · margem e maoObra são específicos do produto
+    // taxa e impostos vêm da config geral
+    function calcularPrecoDe(itens, margem, maoObra) {
+      if (!config || itens.length === 0 || isNaN(margem) || isNaN(maoObra)) return null;
+
+      const custoInsumos = itens.reduce((soma, it) => soma + custoEfetivoInsumo(it.insumo) * it.quantidade, 0);
+      const custoTotal = custoInsumos + maoObra;
+
+      const divisor = 1 - (margem / 100) - (Number(config.taxa_maquininha) / 100) - (Number(config.impostos) / 100);
+      if (divisor <= 0) return { erro: true };
+
+      return { custoTotal, precoFinal: custoTotal / divisor };
+    }
+
+    function calcularPreco() {
+      const itens = itensAtuais.map(it => ({ insumo: it, quantidade: it.quantidade }));
+      const margem = parseFloat(el('pMargem').value);
+      const maoObra = parseFloat(el('pMaoObra').value);
+      return calcularPrecoDe(itens, margem, maoObra);
+    }
+
+    function recalcularPreco() {
+      const resultado = calcularPreco();
+      const btnSalvar = el('btnSalvarProduto');
+      if (!resultado || itensAtuais.length === 0) {
+        el('precoSugerido').textContent = 'R$ 0,00';
+        btnSalvar.disabled = true;
+        return;
+      }
+      if (resultado.erro) {
+        el('precoSugerido').textContent = 'Revise a margem';
+        btnSalvar.disabled = true;
+        return;
+      }
+      el('precoSugerido').textContent = 'R$ ' + resultado.precoFinal.toFixed(2);
+      btnSalvar.disabled = false;
+    }
+
+    el('btnSalvarProduto').onclick = async () => {
+      const nome = el('pNome').value.trim();
+      const margem_contribuicao = parseFloat(el('pMargem').value);
+      const mao_obra = parseFloat(el('pMaoObra').value);
+      if (!nome) { toast('Dê um nome ao produto'); return; }
+      const resultado = calcularPreco();
+      if (!resultado || resultado.erro) { toast('Não consegui calcular o preço'); return; }
+
+      let produtoId = editingProdutoId;
+
+      if (editingProdutoId) {
+        const { error } = await supabaseClient
+          .from('produtos')
+          .update({ nome, margem_contribuicao, mao_obra })
+          .eq('id', editingProdutoId);
+        if (error) { toast('Não consegui salvar as alterações'); console.error(error); return; }
+
+        const { error: errDel } = await supabaseClient.from('produto_itens').delete().eq('produto_id', editingProdutoId);
+        if (errDel) { toast('Não consegui atualizar os itens'); console.error(errDel); return; }
+      } else {
+        const { data: produto, error } = await supabaseClient
+          .from('produtos')
+          .insert({ user_id: userId, nome, margem_contribuicao, mao_obra })
+          .select()
+          .single();
+        if (error) { toast('Não consegui salvar o produto'); console.error(error); return; }
+        produtoId = produto.id;
+      }
+
+      const itensParaSalvar = itensAtuais.map(it => ({
+        produto_id: produtoId,
+        insumo_id: it.insumo_id,
+        quantidade: it.quantidade
+      }));
+      const { error: errItens } = await supabaseClient.from('produto_itens').insert(itensParaSalvar);
+      if (errItens) { toast('Produto salvo, mas houve erro nos itens'); console.error(errItens); }
+      else { toast(editingProdutoId ? 'Alterações salvas!' : 'Produto salvo!'); }
+
+      fecharMontagem();
+      await carregarTudo();
+    };
+
+
+
+    /* ---------------- lista de produtos salvos ---------------- */
+    function renderProdutos() {
+      const list = el('lista');
+      list.innerHTML = '';
+      el('count').textContent = produtos.length;
+      el('emptyLista').style.display = produtos.length ? 'none' : 'block';
+      produtos.forEach(p => {
+        const itens = (p.produto_itens || [])
+          .filter(it => it.insumos) // ignora itens cujo insumo foi excluído
+          .map(it => ({ insumo: it.insumos, quantidade: it.quantidade }));
+        const resultado = calcularPrecoDe(itens, Number(p.margem_contribuicao), Number(p.mao_obra || 0));
+        const precoTexto = resultado && !resultado.erro ? 'R$ ' + resultado.precoFinal.toFixed(2) : '—';
+        const custoTexto = resultado && !resultado.erro ? 'R$ ' + resultado.custoTotal.toFixed(2) : '?';
+
+        const row = document.createElement('div');
+        row.className = 'produto';
+        row.innerHTML = `
+      <div>
+        <div class="produto-nome">${p.nome}</div>
+        <div class="produto-meta">custo ${custoTexto} · margem ${p.margem_contribuicao ?? '?'}%</div>
+      </div>
+      <div style="display:flex;align-items:center;">
+        <div class="produto-preco">${precoTexto}</div>
+        <div class="produto-acoes">
+          <button class="icon-btn" data-edit="${p.id}" title="Editar">✎</button>
+          <button class="icon-btn" data-del="${p.id}" title="Excluir">🗑</button>
+        </div>
+      </div>
+    `;
+        list.appendChild(row);
+      });
+      list.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => abrirEdicao(b.dataset.edit));
+      list.querySelectorAll('[data-del]').forEach(b => b.onclick = () => removerProduto(b.dataset.del));
+    }
+    async function removerProduto(id) {
+      const { error } = await supabaseClient.from('produtos').delete().eq('id', id);
+      if (error) { toast('Não consegui remover'); return; }
+      produtos = produtos.filter(p => p.id !== id);
+      renderProdutos();
+      toast('Produto removido');
+    }
+
+    (async () => {
+      const session = await requireAuth();
+      if (!session) return;
+      userId = session.user.id;
+      carregarTudo();
+    })();
+  </script>
+</body>
+
+</html>
