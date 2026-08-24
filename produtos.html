@@ -372,7 +372,7 @@
   </header>
 
   <div class="wrap">
-    <div class="eyebrow" style="margin-top:16px;">Florais ERP · São José dos Campos</div>
+    <div class="eyebrow" style="margin-top:16px;">Florais · ERP</div>
     <h1>Produtos</h1>
     <p style="color:var(--cinza-texto);margin:0;">Escolha os insumos e a quantidade — o preço certo sai sozinho.</p>
 
@@ -457,7 +457,7 @@
   <div class="toast" id="toast"></div>
 
   <script src="assets/js/config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2 [cdn.jsdelivr.net]"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/js/supabase-client.js"></script>
   <script>
     const el = id => document.getElementById(id);
@@ -514,7 +514,7 @@
       }
       const { data, error } = await supabaseClient
         .from('config_financeiro')
-        .upsert({ user_id: userId, taxa_maquininha, impostos })
+        .upsert({ user_id: userId, taxa_maquininha: taxa_maquininha, impostos: impostos })
         .select()
         .single();
       if (error) { toast('Não consegui salvar'); console.error(error); return; }
@@ -608,7 +608,7 @@
         existente.quantidade += 1;
       } else {
         itensAtuais.push({
-          insumo_id: insumo.id[insumo.id],
+          insumo_id: insumo.id,
           nome: insumo.nome,
           unidade: insumo.unidade,
           preco: Number(insumo.preco),
@@ -639,7 +639,7 @@
       </div>
     </div>
   `).join('');
-      box.querySelectorAll('[data-inc]').forEach(b => b.onclick = () => { itensAtuais[b.dataset.inc[b.dataset.inc]].quantidade += 1; renderItensSelecionados(); recalcularPreco(); });
+      box.querySelectorAll('[data-inc]').forEach(b => b.onclick = () => { itensAtuais[b.dataset.inc].quantidade += 1; renderItensSelecionados(); recalcularPreco(); });
       box.querySelectorAll('[data-dec]').forEach(b => b.onclick = () => {
         const i = b.dataset.dec;
         itensAtuais[i].quantidade = Math.max(0.1, itensAtuais[i].quantidade - 1);
@@ -745,8 +745,6 @@
       fecharMontagem();
       await carregarTudo();
     };
-
-
 
     /* ---------------- lista de produtos salvos ---------------- */
     function renderProdutos() {
