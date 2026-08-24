@@ -291,10 +291,7 @@
           <label>Unidade de medida</label>
           <select id="fUnidade">
             <option value="haste">haste</option>
-            <option value="metro">metro</option>
             <option value="unidade">unidade</option>
-            <option value="kg">kg</option>
-            <option value="folha">folha</option>
           </select>
         </div>
         <div class="field">
@@ -386,22 +383,24 @@
       list.innerHTML = '';
       el('count').textContent = insumos.length;
       el('empty').style.display = insumos.length ? 'none' : 'block';
-      insumos.forEach(it => {
+      insumos
+      .sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
+      .forEach(it => {
         const row = document.createElement('div');
         row.className = 'insumo';
         row.innerHTML = `
-      <div>
-        <div class="insumo-nome">${it.nome}</div>
-        <div class="insumo-meta">${it.unidade}${it.fornecedor ? ' · ' + it.fornecedor : ''}</div>
-      </div>
-      <div style="display:flex;align-items:center;">
-        <div class="insumo-preco">R$ ${Number(it.preco).toFixed(2)}</div>
-        <div class="insumo-row-actions">
-          <button class="icon-btn" data-edit="${it.id}" title="Editar">✎</button>
-          <button class="icon-btn" data-del="${it.id}" title="Excluir">🗑</button>
-        </div>
-      </div>
-    `;
+          <div>
+            <div class="insumo-nome">${it.nome}</div>
+            <div class="insumo-meta">${it.perda ? 'Perda: ' + it.perda + '%': ''}</div>
+          </div>
+          <div style="display:flex;align-items:center;">
+            <div class="insumo-preco">R$ ${Number(it.preco).toFixed(2)}</div>
+            <div class="insumo-row-actions">
+              <button class="icon-btn" data-edit="${it.id}" title="Editar">✎</button>
+              <button class="icon-btn" data-del="${it.id}" title="Excluir">🗑</button>
+            </div>
+          </div>
+        `;
         list.appendChild(row);
       });
       list.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => openEdit(b.dataset.edit));

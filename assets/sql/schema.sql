@@ -52,14 +52,8 @@ create trigger insumos_set_updated_at
 -- ============================================================
 create table if not exists public.config_financeiro (
   user_id uuid primary key references auth.users(id) on delete cascade,
-  margem_lucro numeric(5,2) not null default 30 check (margem_lucro >= 0 and margem_lucro < 100),
   taxa_maquininha numeric(5,2) not null default 0 check (taxa_maquininha >= 0 and taxa_maquininha < 100),
-  custo_mao_obra numeric(10,2) not null default 0 check (custo_mao_obra >= 0),
-  endereco_origem text,
-  origem_lat numeric(9,6),
-  origem_lng numeric(9,6),
-  frete_valor_km numeric(6,2) not null default 0.5, -- R$/km (R$1 a cada 2km)
-  frete_taxa_fixa numeric(10,2) not null default 10, -- taxa fixa por entrega
+  impostos numeric(5,2) not null default 0 check (impostos >= 0 and impostos < 100),
   updated_at timestamptz not null default now()
 );
 
@@ -85,9 +79,7 @@ create table if not exists public.produtos (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
   nome text not null,
-  frete_incluso boolean not null default false,
-  frete_km numeric(6,2),
-  frete_endereco text,
+  margem_contribuicao numeric(5,2) not null default 0 check (margem_contribuicao >= 0 and margem_contribuicao < 100),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
