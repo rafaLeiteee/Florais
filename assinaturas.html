@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assinaturas · Florais ERP</title>
     <link rel="icon" href="assets/img/logo.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com [fonts.googleapis.com]">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
-        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap [fonts.googleapis.com]"
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
@@ -528,10 +528,10 @@
       <div class="card-topo">
         <div>
           <div class="plano-nome">${p.nome}</div>
-          <div class="plano-meta">${FREQ_LABELp} · R$ ${Number(p.preco).toFixed(2)} · margem ${p.margem_lucro}%</div>
+          <div class="plano-meta">${FREQ_LABEL[p.frequencia]} · R$ ${orcamento !== null ? 'R$ ' + orcamento.toFixed(2) : '—'} · margem ${p.margem_lucro}%</div>
         </div>
         <div style="display:flex;align-items:center;">
-          <div class="plano-orcamento">${orcamento !== null ? 'R$ ' + orcamento.toFixed(2) : '—'}</div>
+          <div class="plano-orcamento">${Number(p.preco).toFixed(2)}</div>
           <div class="card-acoes">
             <button class="icon-btn" data-edit-plano="${p.id}" title="Editar">✎</button>
             <button class="icon-btn" data-del-plano="${p.id}" title="Excluir">🗑</button>
@@ -544,7 +544,7 @@
                 list.appendChild(card);
             });
 
-            list.querySelectorAll('[data-edit-plano]').forEach(b => b.onclick = () => abrirFormPlano(planos.find(p => p.id[p.id] === b.dataset.editPlano)));
+            list.querySelectorAll('[data-edit-plano]').forEach(b => b.onclick = () => abrirFormPlano(planos.find(p => p.id === b.dataset.editPlano)));
             list.querySelectorAll('[data-del-plano]').forEach(b => b.onclick = () => removerPlano(b.dataset.delPlano));
             list.querySelectorAll('[data-toggle-insumos]').forEach(b => b.onclick = () => {
                 el('insumosRef-' + b.dataset.toggleInsumos).classList.toggle('show');
