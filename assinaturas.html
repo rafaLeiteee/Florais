@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assinaturas · Florais ERP</title>
+    <link rel="icon" href="assets/img/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com [fonts.googleapis.com]">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap [fonts.googleapis.com]"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        header.top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 640px;
+            margin: 0 auto;
+            padding: 20px 20px 0;
+        }
+
+        header.top img {
+            height: 30px;
+        }
+
+        .back {
+            font-size: 13px;
+            color: var(--cinza-texto);
+            text-decoration: none;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin: 20px 0 4px;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            background: var(--rosa-queimado);
+            color: var(--verde-escuro);
+            font-weight: 600;
+            font-size: 13.5px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .tab.active {
+            background: var(--verde-escuro);
+            color: var(--off-white);
+        }
+
+        .painel {
+            display: none;
+        }
+
+        .painel.active {
+            display: block;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin: 18px 0;
+            flex-wrap: wrap;
+        }
+
+        .form-card {
+            background: var(--rosa-queimado);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            margin-bottom: 22px;
+            border: 1px solid var(--linha);
+            display: none;
+        }
+
+        .form-card.open {
+            display: block;
+        }
+
+        .form-card h2 {
+            font-size: 18px;
+            margin: 2px 0 16px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .orcamento-preview {
+            background: var(--verde-escuro);
+            color: var(--off-white);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin: 14px 0;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            display: none;
+        }
+
+        .orcamento-preview.show {
+            display: block;
+        }
+
+        .orcamento-preview b {
+            color: var(--amarelo);
+            font-size: 16px;
+        }
+
+        .list-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin: 20px 0 10px;
+        }
+
+        .list-head h2 {
+            font-size: 19px;
+            margin: 0;
+        }
+
+        .count {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            color: #8a8378;
+        }
+
+        .plano-card,
+        .assinante-card {
+            background: var(--off-white);
+            border: 1px solid var(--linha);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+        }
+
+        .card-topo {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .plano-nome,
+        .assinante-nome {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .plano-meta,
+        .assinante-meta {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11.5px;
+            color: #8a8378;
+            margin-top: 3px;
+        }
+
+        .plano-orcamento {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13.5px;
+            color: var(--verde-escuro);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #8a8378;
+            padding: 6px;
+            font-size: 14px;
+            border-radius: 6px;
+        }
+
+        .icon-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--carvao);
+        }
+
+        .card-acoes {
+            display: flex;
+            gap: 2px;
+        }
+
+        .badge {
+            display: inline-block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10.5px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-top: 6px;
+            letter-spacing: 0.02em;
+        }
+
+        .badge.ativo {
+            background: rgba(90, 116, 87, 0.15);
+            color: var(--verde-escuro);
+        }
+
+        .badge.pausado {
+            background: var(--amarelo);
+            color: #6b5218;
+        }
+
+        .badge.cancelado {
+            background: rgba(181, 71, 58, 0.12);
+            color: var(--erro);
+        }
+
+        .entregas-linha {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--linha);
+        }
+
+        .entregas-status {
+            font-size: 12.5px;
+            color: var(--cinza-texto);
+        }
+
+        .entregas-status b {
+            color: var(--verde-escuro);
+        }
+
+        .btn-entregar {
+            font-size: 12.5px;
+            padding: 8px 12px;
+        }
+
+        .insumos-toggle {
+            font-size: 12px;
+            color: var(--vinho);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px 0;
+            margin-top: 6px;
+        }
+
+        .insumos-ref {
+            display: none;
+            margin-top: 8px;
+        }
+
+        .insumos-ref.show {
+            display: block;
+        }
+
+        .insumo-ref-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12.5px;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--linha);
+        }
+
+        .insumo-ref-item:last-child {
+            border-bottom: none;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 32px 20px;
+            color: #8a8378;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="top">
+        <a class="back" href="dashboard.html">← Início</a>
+        <img src="assets/img/logo.png" alt="Florais">
+    </header>
+
+    <div class="wrap">
+        <div class="eyebrow" style="margin-top:16px;">Florais ERP · São José dos Campos</div>
+        <h1>Assinaturas</h1>
+        <p style="color:var(--cinza-texto);margin:0;">Planos, assinantes e acompanhamento das entregas.</p>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="planos">Planos</button>
+            <button class="tab" data-tab="assinantes">Assinantes</button>
+        </div>
+
+        <!-- ============ PLANOS ============ -->
+        <div class="painel active" id="painelPlanos">
+            <div class="actions">
+                <button class="btn-primary" id="btnNovoPlano">Novo plano</button>
+            </div>
+
+            <div class="form-card" id="formPlano">
+                <h2 id="tituloFormPlano">Novo plano</h2>
+                <div class="field">
+                    <label>Nome do plano</label>
+                    <input type="text" id="plNome" placeholder="Ex: Assinatura Mensal Clássica">
+                </div>
+                <div class="row2">
+                    <div class="field">
+                        <label>Frequência</label>
+                        <select id="plFrequencia">
+                            <option value="semanal">Semanal</option>
+                            <option value="quinzenal">Quinzenal</option>
+                            <option value="mensal">Mensal</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Preço (R$)</label>
+                        <input type="number" step="0.01" id="plPreco" placeholder="Ex: 99,00">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Margem de lucro desejada (%)</label>
+                    <input type="number" step="0.1" id="plMargem" placeholder="Ex: 20">
+                </div>
+
+                <div class="orcamento-preview" id="orcamentoPreview">
+                    Orçamento de insumos por entrega: <b id="orcamentoValor">R$ 0,00</b>
+                    <div style="color:var(--rosa-queimado);margin-top:4px;">preço − margem − taxa da maquininha −
+                        impostos</div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn-primary" id="btnSalvarPlano">Salvar plano</button>
+                    <button class="btn-ghost" id="btnCancelarPlano">Cancelar</button>
+                </div>
+            </div>
+
+            <div class="list-head">
+                <h2>Planos cadastrados</h2>
+                <span class="count" id="countPlanos">0</span>
+            </div>
+            <div id="listaPlanos"></div>
+            <div class="empty" id="emptyPlanos">Nenhum plano ainda.</div>
+        </div>
+
+        <!-- ============ ASSINANTES ============ -->
+        <div class="painel" id="painelAssinantes">
+            <div class="actions">
+                <button class="btn-primary" id="btnNovoAssinante">Novo assinante</button>
+            </div>
+
+            <div class="form-card" id="formAssinante">
+                <h2 id="tituloFormAssinante">Novo assinante</h2>
+                <div class="field">
+                    <label>Nome do cliente</label>
+                    <input type="text" id="asNome" placeholder="Ex: Camila Souza">
+                </div>
+                <div class="field">
+                    <label>Plano</label>
+                    <select id="asPlano"></select>
+                </div>
+                <div class="row2">
+                    <div class="field">
+                        <label>Telefone (opcional)</label>
+                        <input type="text" id="asTelefone" placeholder="(12) 90000-0000">
+                    </div>
+                    <div class="field">
+                        <label>Início</label>
+                        <input type="date" id="asDataInicio">
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Endereço de entrega (opcional)</label>
+                    <input type="text" id="asEndereco" placeholder="Rua, número, bairro">
+                </div>
+                <div class="field">
+                    <label>Status</label>
+                    <select id="asStatus">
+                        <option value="ativo">Ativo</option>
+                        <option value="pausado">Pausado</option>
+                        <option value="cancelado">Cancelado</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn-primary" id="btnSalvarAssinante">Salvar assinante</button>
+                    <button class="btn-ghost" id="btnCancelarAssinante">Cancelar</button>
+                </div>
+            </div>
+
+            <div class="list-head">
+                <h2>Assinantes</h2>
+                <span class="count" id="countAssinantes">0</span>
+            </div>
+            <div id="listaAssinantes"></div>
+            <div class="empty" id="emptyAssinantes">Nenhum assinante ainda.</div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="assets/js/config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/supabase-client.js"></script>
+    <script>
+        const el = id => document.getElementById(id);
+        const toast = (msg) => {
+            const t = el('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2200);
+        };
+
+        let userId = null;
+        let config = null; // { taxa_maquininha, impostos }
+        let planos = [];
+        let assinantes = [];
+        let insumosDisponiveis = [];
+        let editingPlanoId = null;
+        let editingAssinanteId = null;
+
+        const FREQ_LABEL = { semanal: 'Semanal', quinzenal: 'Quinzenal', mensal: 'Mensal' };
+        const FREQ_ESPERADA_MES = { semanal: 4, quinzenal: 2, mensal: 1 }; // entregas esperadas por mês, aproximado
+
+        /* ---------------- tabs ---------------- */
+        document.querySelectorAll('.tab').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.painel').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                el(btn.dataset.tab === 'planos' ? 'painelPlanos' : 'painelAssinantes').classList.add('active');
+            };
+        });
+
+        /* ---------------- carregar tudo ---------------- */
+        async function carregarTudo() {
+            const [{ data: pl }, { data: asn }, { data: cfg }, { data: ins }] = await Promise.all([
+                supabaseClient.from('planos_assinatura').select('*').order('nome'),
+                supabaseClient.from('assinantes').select('*, planos_assinatura(nome, frequencia, preco), entregas_assinatura(data_entrega)').order('nome'),
+                supabaseClient.from('config_financeiro').select('*').eq('user_id', userId).maybeSingle(),
+                supabaseClient.from('insumos').select('nome, preco, unidade').order('preco')
+            ]);
+            planos = pl || [];
+            assinantes = asn || [];
+            config = cfg || null;
+            insumosDisponiveis = ins || [];
+            renderPlanos();
+            renderAssinantes();
+            preencherSelectPlanos();
+        }
+
+        /* ---------------- cálculo do orçamento de insumos ---------------- */
+        function orcamentoInsumos(preco, margem) {
+            if (!config) return null;
+            const taxa = Number(config.taxa_maquininha || 0);
+            const impostos = Number(config.impostos || 0);
+            const fator = 1 - (margem / 100) - (taxa / 100) - (impostos / 100);
+            if (fator <= 0) return null;
+            return preco * fator;
+        }
+
+        /* ============ PLANOS ============ */
+        el('btnNovoPlano').onclick = () => abrirFormPlano();
+        el('btnCancelarPlano').onclick = () => el('formPlano').classList.remove('open');
+
+        function abrirFormPlano(plano) {
+            editingPlanoId = plano ? plano.id: null;
+            el('tituloFormPlano').textContent = plano ? 'Editar plano' : 'Novo plano';
+            el('plNome').value = plano?.nome || '';
+            el('plFrequencia').value = plano?.frequencia || 'mensal';
+            el('plPreco').value = plano?.preco ?? '';
+            el('plMargem').value = plano?.margem_lucro ?? 20;
+            el('formPlano').classList.add('open');
+            atualizarPreviewOrcamento();
+            window.scrollTo({ top: el('formPlano').offsetTop - 20, behavior: 'smooth' });
+        }
+
+        function atualizarPreviewOrcamento() {
+            const preco = parseFloat(el('plPreco').value);
+            const margem = parseFloat(el('plMargem').value);
+            const preview = el('orcamentoPreview');
+            if (isNaN(preco) || isNaN(margem) || !config) { preview.classList.remove('show'); return; }
+            const valor = orcamentoInsumos(preco, margem);
+            if (valor === null) { preview.classList.remove('show'); return; }
+            el('orcamentoValor').textContent = 'R$ ' + valor.toFixed(2);
+            preview.classList.add('show');
+        }
+        el('plPreco').oninput = atualizarPreviewOrcamento;
+        el('plMargem').oninput = atualizarPreviewOrcamento;
+
+        el('btnSalvarPlano').onclick = async () => {
+            const nome = el('plNome').value.trim();
+            const frequencia = el('plFrequencia').value;
+            const preco = parseFloat(el('plPreco').value);
+            const margem_lucro = parseFloat(el('plMargem').value);
+            if (!nome || isNaN(preco) || isNaN(margem_lucro)) { toast('Preencha nome, preço e margem'); return; }
+
+            if (editingPlanoId) {
+                const { error } = await supabaseClient.from('planos_assinatura')
+                    .update({ nome, frequencia, preco, margem_lucro }).eq('id', editingPlanoId);
+                if (error) { toast('Não consegui salvar'); console.error(error); return; }
+            } else {
+                const { error } = await supabaseClient.from('planos_assinatura')
+                    .insert({ user_id: userId, nome, frequencia, preco, margem_lucro });
+                if (error) { toast('Não consegui salvar'); console.error(error); return; }
+            }
+            el('formPlano').classList.remove('open');
+            toast('Plano salvo');
+            await carregarTudo();
+        };
+
+        function renderPlanos() {
+            const list = el('listaPlanos');
+            list.innerHTML = '';
+            el('countPlanos').textContent = planos.length;
+            el('emptyPlanos').style.display = planos.length ? 'none' : 'block';
+
+            planos.forEach(p => {
+                const orcamento = config ? orcamentoInsumos(Number(p.preco), Number(p.margem_lucro)) : null;
+                const card = document.createElement('div');
+                card.className = 'plano-card';
+                const insumosHtml = insumosDisponiveis.slice(0, 8).map(i => `
+      <div class="insumo-ref-item"><span>${i.nome} (${i.unidade})</span><span>R$ ${Number(i.preco).toFixed(2)}</span></div>
+    `).join('') || '<div class="insumo-ref-item">Nenhum insumo cadastrado ainda</div>';
+
+                card.innerHTML = `
+      <div class="card-topo">
+        <div>
+          <div class="plano-nome">${p.nome}</div>
+          <div class="plano-meta">${FREQ_LABELp} · R$ ${Number(p.preco).toFixed(2)} · margem ${p.margem_lucro}%</div>
+        </div>
+        <div style="display:flex;align-items:center;">
+          <div class="plano-orcamento">${orcamento !== null ? 'R$ ' + orcamento.toFixed(2) : '—'}</div>
+          <div class="card-acoes">
+            <button class="icon-btn" data-edit-plano="${p.id}" title="Editar">✎</button>
+            <button class="icon-btn" data-del-plano="${p.id}" title="Excluir">🗑</button>
+          </div>
+        </div>
+      </div>
+      <button class="insumos-toggle" data-toggle-insumos="${p.id}">ver insumos disponíveis (referência)</button>
+      <div class="insumos-ref" id="insumosRef-${p.id}">${insumosHtml}</div>
+    `;
+                list.appendChild(card);
+            });
+
+            list.querySelectorAll('[data-edit-plano]').forEach(b => b.onclick = () => abrirFormPlano(planos.find(p => p.id[p.id] === b.dataset.editPlano)));
+            list.querySelectorAll('[data-del-plano]').forEach(b => b.onclick = () => removerPlano(b.dataset.delPlano));
+            list.querySelectorAll('[data-toggle-insumos]').forEach(b => b.onclick = () => {
+                el('insumosRef-' + b.dataset.toggleInsumos).classList.toggle('show');
+            });
+        }
+
+        async function removerPlano(id) {
+            const { error } = await supabaseClient.from('planos_assinatura').delete().eq('id', id);
+            if (error) { toast('Não consegui remover — verifique se há assinantes nesse plano'); return; }
+            toast('Plano removido');
+            await carregarTudo();
+        }
+
+        /* ============ ASSINANTES ============ */
+        function preencherSelectPlanos() {
+            const select = el('asPlano');
+            select.innerHTML = planos.map(p => `<option value="${p.id}">${p.nome} (${FREQ_LABEL})</option>`).join('')
+                || '<option value="">Cadastre um plano primeiro</option>';
+        }
+
+        el('btnNovoAssinante').onclick = () => {
+            if (!planos.length) { toast('Cadastre um plano antes'); return; }
+            abrirFormAssinante();
+        };
+        el('btnCancelarAssinante').onclick = () => el('formAssinante').classList.remove('open');
+
+        function abrirFormAssinante(assinante) {
+            editingAssinanteId = assinante ? assinante.id: null;
+            el('tituloFormAssinante').textContent = assinante ? 'Editar assinante' : 'Novo assinante';
+            el('asNome').value = assinante?.nome || '';
+            el('asPlano').value = assinante?.plano_id || planos[0]?.id || '';
+            el('asTelefone').value = assinante?.telefone || '';
+            el('asDataInicio').value = assinante?.data_inicio || new Date().toISOString().slice(0, 10);
+            el('asEndereco').value = assinante?.endereco || '';
+            el('asStatus').value = assinante?.status || 'ativo';
+            el('formAssinante').classList.add('open');
+            window.scrollTo({ top: el('formAssinante').offsetTop - 20, behavior: 'smooth' });
+        }
+
+        el('btnSalvarAssinante').onclick = async () => {
+            const nome = el('asNome').value.trim();
+            const plano_id = el('asPlano').value;
+            const telefone = el('asTelefone').value.trim();
+            const data_inicio = el('asDataInicio').value;
+            const endereco = el('asEndereco').value.trim();
+            const status = el('asStatus').value;
+            if (!nome || !plano_id) { toast('Preencha nome e plano'); return; }
+
+            if (editingAssinanteId) {
+                const { error } = await supabaseClient.from('assinantes')
+                    .update({ nome, plano_id, telefone, data_inicio, endereco, status }).eq('id', editingAssinanteId);
+                if (error) { toast('Não consegui salvar'); console.error(error); return; }
+            } else {
+                const { error } = await supabaseClient.from('assinantes')
+                    .insert({ user_id: userId, nome, plano_id, telefone, data_inicio, endereco, status });
+                if (error) { toast('Não consegui salvar'); console.error(error); return; }
+            }
+            el('formAssinante').classList.remove('open');
+            toast('Assinante salvo');
+            await carregarTudo();
+        };
+
+        function entregasNesteMes(assinante) {
+            const agora = new Date();
+            const mes = agora.getMonth(), ano = agora.getFullYear();
+            return (assinante.entregas_assinatura || []).filter(e => {
+                const d = new Date(e.data_entrega + 'T00:00:00');
+                return d.getMonth() === mes && d.getFullYear() === ano;
+            }).length;
+        }
+
+        function renderAssinantes() {
+            const list = el('listaAssinantes');
+            list.innerHTML = '';
+            el('countAssinantes').textContent = assinantes.length;
+            el('emptyAssinantes').style.display = assinantes.length ? 'none' : 'block';
+
+            assinantes.forEach(a => {
+                const plano = a.planos_assinatura;
+                const feitas = entregasNesteMes(a);
+                const esperadas = plano ? FREQ_ESPERADA_MES: '?';
+                const card = document.createElement('div');
+                card.className = 'assinante-card';
+                card.innerHTML = `
+      <div class="card-topo">
+        <div>
+          <div class="assinante-nome">${a.nome}</div>
+          <div class="assinante-meta">${plano ? plano.nome + ' · R$ ' + Number(plano.preco).toFixed(2) : 'sem plano'}${a.telefone ? ' · ' + a.telefone : ''}</div>
+          <span class="badge ${a.status}">${a.status}</span>
+        </div>
+        <div class="card-acoes">
+          <button class="icon-btn" data-edit-assinante="${a.id}" title="Editar">✎</button>
+          <button class="icon-btn" data-del-assinante="${a.id}" title="Excluir">🗑</button>
+        </div>
+      </div>
+      <div class="entregas-linha">
+        <div class="entregas-status"><b>${feitas}</b> de ~${esperadas} entregas este mês</div>
+        <button class="btn-secondary btn-entregar" data-entregar="${a.id}">Registrar entrega hoje</button>
+      </div>
+    `;
+                list.appendChild(card);
+            });
+
+            list.querySelectorAll('[data-edit-assinante]').forEach(b => b.onclick = () => abrirFormAssinante(assinantes.find(a => a.id === b.dataset.editAssinante)));
+            list.querySelectorAll('[data-del-assinante]').forEach(b => b.onclick = () => removerAssinante(b.dataset.delAssinante));
+            list.querySelectorAll('[data-entregar]').forEach(b => b.onclick = () => registrarEntrega(b.dataset.entregar));
+        }
+
+        async function registrarEntrega(assinanteId) {
+            const { error } = await supabaseClient.from('entregas_assinatura')
+                .insert({ assinante_id: assinanteId, data_entrega: new Date().toISOString().slice(0, 10) });
+            if (error) { toast('Não consegui registrar'); console.error(error); return; }
+            toast('Entrega registrada!');
+            await carregarTudo();
+        }
+
+        async function removerAssinante(id) {
+            const { error } = await supabaseClient.from('assinantes').delete().eq('id', id);
+            if (error) { toast('Não consegui remover'); return; }
+            toast('Assinante removido');
+            await carregarTudo();
+        }
+
+        (async () => {
+            const session = await requireAuth();
+            if (!session) return;
+            userId = session.user.id;
+            carregarTudo();
+        })();
+    </script>
+</body>
+
+</html>
